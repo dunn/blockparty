@@ -11,7 +11,7 @@ else
   SHASUM="sha256sum"
 fi
 
-curl -L "$QL_URL" -o "$QL_TMP/quicklisp.lisp"
+curl -L "$QL_URL" -o "$QL_TMP/quicklisp.lisp" >/dev/null 2>&1
 checksum=$(eval "$SHASUM $QL_TMP/quicklisp.lisp")
 
 if [[ ${checksum//\ */} != "$QL_SHA" ]]; then
