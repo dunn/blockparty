@@ -1,6 +1,6 @@
 .PHONY: deps ql
 
-quicklisp/quicklisp.lisp: scripts/get-ql.sh
+quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
 
 ql: quicklisp/quicklisp.lisp
