@@ -1,9 +1,8 @@
 .PHONY: deps ql
 
-deps: deps/quicklisp.lisp
-	sbcl --load deps/deps.lisp
-
-deps/quicklisp.lisp: scripts/get-ql.sh
+quicklisp/quicklisp.lisp: scripts/get-ql.sh
 	bash scripts/get-ql.sh
 
-ql: deps/quicklisp.lisp
+ql: quicklisp/quicklisp.lisp
+	sbcl --load quicklisp/quicklisp.lisp \
+	--eval "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit

@@ -20,6 +20,6 @@ if [[ ${checksum//\ */} != "$QL_SHA" ]]; then
   exit 1
 fi
 
-if [[ ! -d deps ]]; then mkdir deps; fi
+if [[ ! -d quicklisp ]]; then mkdir quicklisp; fi
 
-mv "$QL_TMP/quicklisp.lisp" deps/quicklisp.lisp
+mv "$QL_TMP/quicklisp.lisp" quicklisp/quicklisp.lisp
