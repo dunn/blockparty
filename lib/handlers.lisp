@@ -14,24 +14,3 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with read-thing.  If not, see <http://www.gnu.org/licenses/>.
-
-(load "quicklisp/setup.lisp")
-(ql:quickload 'hunchentoot)
-
-(defvar party (make-instance
-               'hunchentoot:easy-acceptor
-                :port 3000
-                :document-root "www/"
-                :access-log-destination "log/access.log"
-                :message-log-destination "log/message.log"))
-
-(setq hunchentoot:*dispatch-table*
-      (list
-       (hunchentoot:create-regex-dispatcher "^/toot" 'toot)))
-
-(defun toot ()
-  "Toot"
-  (setf (hunchentoot:content-type*) "text/plain")
-  (format nil "fart"))
-
-(hunchentoot:start party)
