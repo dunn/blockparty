@@ -6,7 +6,7 @@
                 :port 3000
                 :document-root "www/"
                 :access-log-destination "log/access.log"
-                :message-log-destination "log/error.log"))
+                :message-log-destination "log/message.log"))
 
 (setq hunchentoot:*dispatch-table*
       (list
