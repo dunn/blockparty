@@ -1,7 +1,4 @@
-.PHONY: deps ql server
-
-deps: quicklisp/setup.lisp
-	sbcl --load quicklisp/setup.lisp --script scripts/dependencies.lisp
+.PHONY: ql server
 
 quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
