@@ -1,1 +1,4 @@
+log/*
+!log/.keep
 quicklisp
+www
