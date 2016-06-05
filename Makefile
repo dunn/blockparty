@@ -15,7 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with read-thing.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: ql server
+.PHONY: ql server update
+
+quicklisp/dists/distinfo.txt:
+	sbcl --load quicklisp/setup.lisp \
+	--eval "(ql:update-dist \"quicklisp\")" --quit
+
+update: quicklisp/dists/distinfo.txt
 
 quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
