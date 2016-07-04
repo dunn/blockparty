@@ -15,21 +15,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with read-thing.  If not, see <http://www.gnu.org/licenses/>.
 
-(load "quicklisp/setup.lisp")
-(ql:quickload 'hunchentoot)
+(load "lib/html.lisp")
 
-(defvar block-party (make-instance
-               'hunchentoot:easy-acceptor
-                :port 3000
-                :access-log-destination "log/access.log"
-                :message-log-destination "log/message.log"))
-
-(load "lib/handlers.lisp")
-
-(setq hunchentoot:*dispatch-table*
-      (list
-       (hunchentoot:create-regex-dispatcher "^/login$" 'login)
-       (hunchentoot:create-regex-dispatcher "^/auth$" 'callback)
-       (hunchentoot:create-regex-dispatcher "^/$" 'index)))
-
-(hunchentoot:start block-party)
+(defun view/index (&optional flash user)
+  "The view rendered at the root."
+  (html/page "Block Party" "toot toot"))

@@ -14,3 +14,17 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with read-thing.  If not, see <http://www.gnu.org/licenses/>.
+
+(defun login ()
+  "Not implemented."
+  )
+
+(defun auth ()
+  "Not implemented."
+  )
+
+(defun index ()
+  "Allow the user to authorize the application to block on their behalf"
+  (setf (hunchentoot:content-type*) "text/html")
+  (load "views/index.lisp")
+  (view/index))
