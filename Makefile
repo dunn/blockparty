@@ -33,4 +33,7 @@ quicklisp/setup.lisp: quicklisp/quicklisp.lisp
 ql: quicklisp/setup.lisp
 
 server:
-	sbcl --load main.lisp
+	sbcl --eval '(load "quicklisp/setup.lisp")' \
+       --load blockparty.asd \
+       --eval '(ql:quickload "blockparty")' \
+       --eval '(blockparty:main)'

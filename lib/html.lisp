@@ -15,6 +15,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with blockparty.  If not, see <http://www.gnu.org/licenses/>.
 
+(in-package #:blockparty)
+
 (defun html/flash (mode message)
   "A <div> that's displayed temporarily at the top of a page,
 usually a warning or error."

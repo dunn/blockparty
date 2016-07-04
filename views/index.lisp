@@ -15,7 +15,9 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with read-thing.  If not, see <http://www.gnu.org/licenses/>.
 
-(load "lib/html.lisp")
+(in-package #:blockparty)
+
+;; (load "lib/html.lisp")
 
 (defun view/index (&optional flash user)
   "The view rendered at the root."

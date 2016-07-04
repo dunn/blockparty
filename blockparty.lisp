@@ -1,3 +1,5 @@
+;;;; blockparty.lisp
+
 ;; Copyright 2016 Alex Dunn <dunn.alex@gmail.com>
 
 ;; This file is part of blockparty.
@@ -17,15 +19,20 @@
 
 (in-package #:blockparty)
 
-(defun login ()
-  "Not implemented."
-  )
+;; (load "lib/handlers.lisp")
 
-(defun auth ()
-  "Not implemented."
-  )
+(defun main ()
+  "Start the server."
+  (defvar blockparty (make-instance
+                       'hunchentoot:easy-acceptor
+                       :port 3000
+                       :access-log-destination "log/access.log"
+                       :message-log-destination "log/message.log"))
 
-(defun index ()
-  "Allow the user to authorize the application to block on their behalf"
-  (setf (hunchentoot:content-type*) "text/html")
-  (view/index))
+  (setq hunchentoot:*dispatch-table*
+        (list
+         (hunchentoot:create-regex-dispatcher "^/login$" 'login)
+         (hunchentoot:create-regex-dispatcher "^/auth$" 'callback)
+         (hunchentoot:create-regex-dispatcher "^/$" 'index)))
+
+  (hunchentoot:start blockparty))
