@@ -24,6 +24,7 @@
   (defvar blockparty (make-instance
                        'hunchentoot:easy-acceptor
                        :port 3000
+                       :document-root "www/"
                        :access-log-destination "log/access.log"
                        :message-log-destination "log/message.log"))
 
