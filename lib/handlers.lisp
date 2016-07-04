@@ -26,6 +26,6 @@
   )
 
 (defun index ()
-  "Allow the user to authorize the application to block on their behalf"
+  "The view rendered at /."
   (setf (hunchentoot:content-type*) "text/html")
   (view/index))

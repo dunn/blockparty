@@ -15,11 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with blockparty.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: ql server update
+.PHONY: install ql server update
+
+DIST ?= $(shell cat use-dist | tr -d '\n')
+CL_ARGS = --no-sysinit --no-userinit \
+          --load quicklisp/setup.lisp
+
+install:
+	sbcl ${CL_ARGS} --non-interactive \
+       --eval "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)"
 
 quicklisp/dists/distinfo.txt:
-	sbcl --load quicklisp/setup.lisp \
-	--eval "(ql:update-dist \"quicklisp\")" --quit
+	sbcl ${CL_ARGS} --non-interactive \
+       --eval "(ql:update-dist \"quicklisp\")" --quit
 
 update: quicklisp/dists/distinfo.txt
 
@@ -27,13 +35,13 @@ quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
 
 quicklisp/setup.lisp: quicklisp/quicklisp.lisp
-	sbcl --load quicklisp/quicklisp.lisp \
-	--eval "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit
+	sbcl ${CL_ARGS} \
+       --eval "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit
 
 ql: quicklisp/setup.lisp
 
 server:
-	sbcl --eval '(load "quicklisp/setup.lisp")' \
+	sbcl ${CL_ARGS} \
        --load blockparty.asd \
        --eval '(ql:quickload "blockparty")' \
        --eval '(blockparty:main)'

@@ -19,8 +19,6 @@
 
 (in-package #:blockparty)
 
-;; (load "lib/handlers.lisp")
-
 (defun main ()
   "Start the server."
   (defvar blockparty (make-instance
