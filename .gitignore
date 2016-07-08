@@ -1,3 +1,6 @@
+.cache
+/dists
+/quicklisp
+/sandbox
 log/*
 !log/.keep
-quicklisp
