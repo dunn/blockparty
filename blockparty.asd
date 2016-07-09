@@ -4,10 +4,12 @@
   :description "Twitter block manager"
   :author "Alex Dunn <dunn.alex@gmail.com>"
   :license "GPLv3"
-  :depends-on (#:cl-twitter
+  :depends-on (#:cl-redis
+               #:cl-twitter
                #:hunchentoot
+               #:ironclad
                #:north
-               #:ironclad)
+               #:postmodern)
   :serial t
   :components ((:file "package")
                (:module "lib"
