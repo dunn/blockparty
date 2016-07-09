@@ -30,8 +30,8 @@
 
   (setq hunchentoot:*dispatch-table*
         (list
-         (hunchentoot:create-regex-dispatcher "^/login$" 'login)
-         (hunchentoot:create-regex-dispatcher "^/auth$" 'callback)
+         (hunchentoot:create-regex-dispatcher "^/login/?$" 'login)
+         (hunchentoot:create-regex-dispatcher "^/auth/?$" 'callback)
          (hunchentoot:create-regex-dispatcher "^/$" 'index)))
 
   (hunchentoot:start blockparty))
