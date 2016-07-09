@@ -15,13 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with blockparty.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: install-dist ql server update
+.PHONY: dist-install dist-update ql server
 
 DIST ?= $(shell cat use-dist | tr -d '\n')
 CL_ARGS = --no-sysinit --no-userinit \
           --load quicklisp/setup.lisp
 
-install-dist:
+dist-install:
 	sbcl ${CL_ARGS} --non-interactive \
        --eval "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
        --load blockparty.asd \
@@ -31,7 +31,7 @@ quicklisp/dists/distinfo.txt:
 	sbcl ${CL_ARGS} --non-interactive \
        --eval "(ql:update-dist \"quicklisp\")" --quit
 
-update: quicklisp/dists/distinfo.txt
+dist-update: quicklisp/dists/distinfo.txt
 
 quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
