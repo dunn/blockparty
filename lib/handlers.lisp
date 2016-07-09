@@ -40,6 +40,8 @@ to authorize the application."
   (let* ((chirp-extra:*oauth-api-key* (gethash "client_key" oauth-parameters))
          (chirp-extra:*oauth-api-secret* (gethash "client_secret" oauth-parameters))
          (request-alist)
+         ;; Default to 302 for a redirect to Twitter's auth page in
+         ;; the case of a successful call to oauth/request-token
          (response-code 302))
     ;; http://stackoverflow.com/a/13628395
     (handler-case
@@ -47,15 +49,19 @@ to authorize the application."
       ;; If the request fails, log the error and leave `request-alist'
       ;; unset
       (chirp:oauth-request-error (err)
+        ;; Probably 401 in this case
         (setq response-code (chirp:http-status err))
         (hunchentoot:acceptor-log-message
+         ;; Magic variable assigned to the acceptor calling this
+         ;; handler: http://weitz.de/hunchentoot/#*acceptor*
          hunchentoot:*acceptor*
          :error
          (format nil "~d: ~a"
                  (chirp:http-status err)
                  (cdr (caadar (chirp:http-body err)))))))
-    ;; Defaults to 302 for a successful redirect to Twitter's auth
-    ;; page
+    ;; *reply* is another magic variable assigned to the object
+    ;; Hunchentoot uses to build its response to requests:
+    ;; http://weitz.de/hunchentoot/#*reply*
     (setf (hunchentoot:return-code hunchentoot:*reply*) response-code)
     (if request-alist
         (progn
@@ -66,7 +72,7 @@ to authorize the application."
                              "https://api.twitter.com/oauth/authenticate?oauth_token="
                              (cdr (assoc :oauth-token request-alist))))
           "Redirecting to Twitter dot com...")
-      ;; TODO: Make a real page
+      ;; TODO: Make a real error page + message
       "An error occured.")))
 
 (defun auth ()
