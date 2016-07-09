@@ -37,12 +37,12 @@ available to both `login' and `auth'.")
 (defun login ()
   "Get a request token from Twitter, then redirect the user to Twitter
 to authorize the application."
-  (let* ((chirp-extra:*oauth-api-key* (gethash "client_key" oauth-parameters))
-         (chirp-extra:*oauth-api-secret* (gethash "client_secret" oauth-parameters))
-         (request-alist)
-         ;; Default to 302 for a redirect to Twitter's auth page in
-         ;; the case of a successful call to oauth/request-token
-         (response-code 302))
+  (let ((chirp-extra:*oauth-api-key* (gethash "client_key" oauth-parameters))
+        (chirp-extra:*oauth-api-secret* (gethash "client_secret" oauth-parameters))
+        (request-alist)
+        ;; Default to 302 for a redirect to Twitter's auth page in
+        ;; the case of a successful call to oauth/request-token
+        (response-code 302))
     ;; http://stackoverflow.com/a/13628395
     (handler-case
         (setq request-alist (chirp:oauth/request-token (gethash "callback_url" oauth-parameters)))
