@@ -27,7 +27,12 @@
                              :name "oauth" :type "yml"))
   "OAuth settings for requesting tokens from Twitter.")
 
-;; (gethash '"client_secret" oauth-parameters)
+;; (defvar request-alist nil)
+;; (defvar mip nil)
+;; (handler-case
+;;     (setq request-alist (chirp:oauth/request-token (gethash "callback_url" oauth-parameters)))
+;;   (chirp:oauth-request-error (err)
+;;     (setq mip (chirp:http-body err))))
 
 (defvar request-secret nil
   "Temporary secret credential for identifying the access request to Twitter.
