@@ -6,6 +6,7 @@
   :license "GPLv3"
   :depends-on (#:chirp
                #:cl-redis
+               #:cl-yaml
                #:hunchentoot
                #:ironclad
                #:postmodern)

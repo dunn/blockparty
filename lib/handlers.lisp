@@ -17,9 +17,57 @@
 
 (in-package #:blockparty)
 
+;; Load the OAuth settings from ../oauth.yml
+;;
+;; yaml:parse returns a hash accessed as
+;; (gethash "method" oauth-parameters) => "HMAC-SHA1"
+(defvar oauth-parameters
+  ;; http://www.lispworks.com/documentation/HyperSpec/Body/f_mk_pn.htm
+  (yaml:parse (make-pathname :directory '(:relative "config")
+                             :name "oauth" :type "yml"))
+  "OAuth settings for requesting tokens from Twitter.")
+
+;; (gethash '"client_secret" oauth-parameters)
+
+(defvar request-secret nil
+  "Temporary secret credential for identifying the access request to Twitter.
+Declared outside of the handler functions since it needs to be
+available to both `login' and `auth'.")
+
 (defun login ()
-  "Not implemented."
-  )
+  "Get a request token from Twitter, then redirect the user to Twitter
+to authorize the application."
+  (let* ((chirp-extra:*oauth-api-key* (gethash "client_key" oauth-parameters))
+         (chirp-extra:*oauth-api-secret* (gethash "client_secret" oauth-parameters))
+         (request-alist)
+         (response-code 302))
+    ;; http://stackoverflow.com/a/13628395
+    (handler-case
+        (setq request-alist (chirp:oauth/request-token (gethash "callback_url" oauth-parameters)))
+      ;; If the request fails, log the error and leave `request-alist'
+      ;; unset
+      (chirp:oauth-request-error (err)
+        (setq response-code (chirp:http-status err))
+        (hunchentoot:acceptor-log-message
+         hunchentoot:*acceptor*
+         :error
+         (format nil "~d: ~a"
+                 (chirp:http-status err)
+                 (cdr (caadar (chirp:http-body err)))))))
+    ;; Defaults to 302 for a successful redirect to Twitter's auth
+    ;; page
+    (setf (hunchentoot:return-code hunchentoot:*reply*) response-code)
+    (if request-alist
+        (progn
+          (setq request-secret (assoc :oauth-token-secret request-alist))
+          (setf (hunchentoot:return-code hunchentoot:*reply*) 302)
+          (setf (hunchentoot:header-out "Location" hunchentoot:*reply*)
+                (concatenate 'string
+                             "https://api.twitter.com/oauth/authenticate?oauth_token="
+                             (cdr (assoc :oauth-token request-alist))))
+          "Redirecting to Twitter dot com...")
+      ;; TODO: Make a real page
+      "An error occured.")))
 
 (defun auth ()
   "Not implemented."

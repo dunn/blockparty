@@ -1,0 +1,8 @@
+---
+access_url: 'https://api.twitter.com/oauth/access_token'
+callback_url: 'http://localhost:3000/auth'
+client_key: ''
+client_secret: ''
+method: 'HMAC-SHA1'
+request_url: 'https://api.twitter.com/oauth/request_token'
+version: '1.0A'
