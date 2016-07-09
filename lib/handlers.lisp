@@ -66,7 +66,7 @@ to authorize the application."
          :error
          (format nil "~d: ~a"
                  (chirp:http-status err)
-                 (cdr (caadar (chirp:http-body err)))))))
+                 (cdr (assoc :message (car (cdr (assoc :errors (chirp:http-body err))))))))))
     ;; *reply* is another magic variable assigned to the object
     ;; Hunchentoot uses to build its response to requests:
     ;; http://weitz.de/hunchentoot/#*reply*
