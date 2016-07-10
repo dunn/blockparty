@@ -28,3 +28,15 @@ If the variable is unset return nil."
   #+LISPWORKS (lispworks:environment-variable variable)
   #+SBCL (sb-unix::posix-getenv variable)
   )
+
+(defun delete-session (session-id)
+  "Erase the SESSION-ID from Redis."
+  (when session-id
+    (hunchentoot:acceptor-log-message
+     hunchentoot:*acceptor* :info
+     (format nil "Deleting session ~a" session-id))
+    (redis:with-connection ()
+      (redis:with-pipelining
+        (red:del (concatenate 'string session-id ":passwd"))
+        (red:del (concatenate 'string session-id ":token"))
+        (red:del (concatenate 'string session-id ":secret"))))))

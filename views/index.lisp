@@ -17,8 +17,20 @@
 
 (in-package #:blockparty)
 
-;; (load "lib/html.lisp")
-
-(defun view/index (&optional flash user)
+(defun view/index (&optional class flash)
   "The view rendered at the root."
-  (html/page "Block Party" "toot toot"))
+  (let* ((session-id (hunchentoot:cookie-in "session-id" hunchentoot:*request*))
+         (session-vector (ironclad:ascii-string-to-byte-array session-id))
+         (session-passwd (red:get (concatenate 'string session-id ":passwd"))))
+
+    ;; (hunchentoot:acceptor-log-message
+    ;;  hunchentoot:*acceptor* :debug (format nil "headers: ~a" (hunchentoot:headers-in*)))
+    ;; (hunchentoot:acceptor-log-message
+    ;;  hunchentoot:*acceptor* :debug (format nil "session-id ~a, passwd ~a" session-id session-passwd))
+
+    (if (and session-passwd
+             (ironclad:pbkdf2-check-password session-vector session-passwd))
+        (html/page "Block Party" "<p>Logged in my dude</p>" class flash)
+      (html/page
+       "Blick Party"
+       "<p><a href='/login' title='Log in please'>Log in now</a></p>" class flash))))

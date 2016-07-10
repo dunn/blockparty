@@ -9,13 +9,14 @@
                #:cl-yaml
                #:hunchentoot
                #:ironclad
-               #:postmodern)
+               #:postmodern
+               #:unicly)
   :serial t
   :components ((:file "package")
                (:module "lib"
-                        :serial t
-                        :components ((:file "html")
-                                     (:file "handlers")))
+                        :components ((:file "handlers")
+                                     (:file "html")
+                                     (:file "util")))
                (:module "views"
                         :components ((:file "index")))
                (:file "blockparty")))

@@ -31,7 +31,20 @@
   (setq hunchentoot:*dispatch-table*
         (list
          (hunchentoot:create-regex-dispatcher "^/login/?$" 'login)
-         (hunchentoot:create-regex-dispatcher "^/auth/?$" 'callback)
-         (hunchentoot:create-regex-dispatcher "^/$" 'index)))
+         (hunchentoot:create-regex-dispatcher "^/auth/?$" 'auth)
+         (hunchentoot:create-regex-dispatcher "^/$" 'entry)))
+
+  (redis:connect)
+  (red:set "salt"
+           (ironclad:byte-array-to-hex-string
+            (ironclad:make-random-salt)))
+
+  (ironclad:byte-array-to-hex-string
+   (ironclad:pbkdf2-hash-password (ironclad:ascii-string-to-byte-array "honk")
+                                  :salt (ironclad:ascii-string-to-byte-array "shit")))
+
+  (ironclad:pbkdf2-hash-password-to-combined-string
+   (ironclad:ascii-string-to-byte-array "honk")
+   :salt (ironclad:ascii-string-to-byte-array "shit"))
 
   (hunchentoot:start blockparty))

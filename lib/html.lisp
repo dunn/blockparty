@@ -39,6 +39,6 @@ usually a warning or error."
   "An entire HTML page."
   (concatenate 'string
                (html/intro title class)
-               (if flash (html/flash (car flash) (car (cdr flash))))
+               (if flash (html/flash (car flash) (cdr flash)))
                "<main>" content "</main>"
                (html/outro)))
