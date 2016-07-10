@@ -14,9 +14,12 @@
   :serial t
   :components ((:file "package")
                (:module "lib"
-                        :components ((:file "handlers")
-                                     (:file "html")
+                        :components ((:file "html")
                                      (:file "util")))
+               (:module "lib/handlers"
+                        :components ((:file "callback")
+                                     (:file "login")
+                                     (:file "root")))
                (:module "views"
                         :components ((:file "index")))
                (:file "blockparty")))

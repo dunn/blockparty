@@ -28,23 +28,24 @@
                        :access-log-destination "log/access.log"
                        :message-log-destination "log/message.log"))
 
+  ;; Load the OAuth settings from ../oauth.yml
+  ;;
+  ;; yaml:parse returns a hash accessed as
+  ;; (gethash "method" oauth-parameters) => "HMAC-SHA1"
+  (setq *oauth-config*
+        ;; http://www.lispworks.com/documentation/HyperSpec/Body/f_mk_pn.htm
+        (yaml:parse (make-pathname :directory '(:relative "config")
+                                     :name "oauth" :type "yml")))
+
   (setq hunchentoot:*dispatch-table*
         (list
-         (hunchentoot:create-regex-dispatcher "^/login/?$" 'login)
-         (hunchentoot:create-regex-dispatcher "^/auth/?$" 'auth)
-         (hunchentoot:create-regex-dispatcher "^/$" 'entry)))
+         (hunchentoot:create-regex-dispatcher "^/login/?$" 'handle/login)
+         (hunchentoot:create-regex-dispatcher "^/auth/?$" 'handle/callback)
+         (hunchentoot:create-regex-dispatcher "^/$" 'handle/root)))
 
   (redis:connect)
   (red:set "salt"
            (ironclad:byte-array-to-hex-string
             (ironclad:make-random-salt)))
-
-  (ironclad:byte-array-to-hex-string
-   (ironclad:pbkdf2-hash-password (ironclad:ascii-string-to-byte-array "honk")
-                                  :salt (ironclad:ascii-string-to-byte-array "shit")))
-
-  (ironclad:pbkdf2-hash-password-to-combined-string
-   (ironclad:ascii-string-to-byte-array "honk")
-   :salt (ironclad:ascii-string-to-byte-array "shit"))
 
   (hunchentoot:start blockparty))

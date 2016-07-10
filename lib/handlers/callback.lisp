@@ -17,98 +17,12 @@
 
 (in-package #:blockparty)
 
-;; Load the OAuth settings from ../oauth.yml
-;;
-;; yaml:parse returns a hash accessed as
-;; (gethash "method" oauth-parameters) => "HMAC-SHA1"
-(defvar oauth-parameters
-  ;; http://www.lispworks.com/documentation/HyperSpec/Body/f_mk_pn.htm
-  (yaml:parse (make-pathname :directory '(:relative "config")
-                             :name "oauth" :type "yml"))
-  "OAuth settings for requesting tokens from Twitter.")
-
-(setq chirp-extra:*oauth-api-key* (gethash "client_key" oauth-parameters))
-(setq chirp-extra:*oauth-api-secret* (gethash "client_secret" oauth-parameters))
-
-;; (defvar request-alist nil)
-;; (defvar mip nil)
-;; (handler-case
-;;     (setq request-alist (chirp:oauth/request-token (gethash "callback_url" oauth-parameters)))
-;;   (chirp:oauth-request-error (err)
-;;     (setq mip (chirp:http-body err))))
-
-(defun login ()
-  "Get a request token from Twitter, then redirect the user to Twitter
-to authorize the application."
-  (let (;; `request-alist' remains nil unless we successfully get a request
-        ;; token, to which it is assigned
-        (request-alist)
-        ;; Default to 302 for a redirect to Twitter's auth page in
-        ;; the case of a successful call to oauth/request-token
-        (response-code 302))
-    ;; http://stackoverflow.com/a/13628395
-    (handler-case
-        (setq request-alist (chirp:oauth/request-token (gethash "callback_url" oauth-parameters)))
-      ;; If the request fails, log the error and leave `request-alist'
-      ;; unset
-      (chirp:oauth-request-error (err)
-        ;; Probably 401 in this case
-        (setq response-code (chirp:http-status err))
-        (hunchentoot:acceptor-log-message
-         ;; *acceptor* is a magic variable assigned to the acceptor
-         ;; calling this handler:
-         ;; http://weitz.de/hunchentoot/#*acceptor*
-         hunchentoot:*acceptor*
-         :error
-         (format nil "~d: ~a"
-                 (chirp:http-status err)
-                 (cdr (assoc :message (car (cdr (assoc :errors (chirp:http-body err))))))))))
-    ;; *reply* is another magic variable assigned to the object
-    ;; Hunchentoot uses to build its response to requests:
-    ;; http://weitz.de/hunchentoot/#*reply*
-    (setf (hunchentoot:return-code hunchentoot:*reply*) response-code)
-    (if request-alist
-        (let* ((uuid (write-to-string (unicly:make-v4-uuid)))
-               (request-token (cdr (assoc :oauth-token request-alist)))
-               (request-secret (cdr (assoc :oauth-token-secret request-alist)))
-               ;; These are stored in Redis
-               (token-cookie-key (concatenate 'string uuid ":token"))
-               (secret-cookie-key (concatenate 'string uuid ":secret"))
-               (cookie (hunchentoot:set-cookie
-                        "request-id"
-                        :value uuid
-                        :max-age 60
-                        :path "/"
-                        :secure (equal "production" (getenv "LISP_ENV"))
-                        :http-only t)))
-          ;; Hunchentoot has it's own full-fledged session handling
-          ;; but I'm not using it since I don't really understand how
-          ;; it works: http://weitz.de/hunchentoot/#sessions
-          ;;
-          ;; Instead we'll just use the cookie functions and manage
-          ;; sessions ourselves in Redis.
-          (hunchentoot:set-cookie* cookie)
-          (redis:with-connection ()
-            (redis:with-pipelining
-              (red:set token-cookie-key request-token)
-              (red:expire token-cookie-key 60)
-              (red:set secret-cookie-key request-secret)
-              (red:expire secret-cookie-key 60)))
-
-          (setf (hunchentoot:return-code hunchentoot:*reply*) 302)
-          (setf (hunchentoot:header-out "Location" hunchentoot:*reply*)
-                (concatenate 'string "https://api.twitter.com/oauth/authenticate?oauth_token=" request-token))
-          "Redirecting to Twitter dot com...")
-      (view/html
-       nil
-       '((:mode . "error")
-         (:message . "Failed to get a request token. Please try again or open an issue."))))))
-
-
-(defun auth ()
+(defun handle/callback ()
   "When arriving from Twitter with a valid oauth_verifier, get an
 access token from Twitter."
-  (let* (;; `access-alist' remains nil unless we successfully get an access
+  (let* ((chirp-extra:*oauth-api-key* (gethash "client_key" *oauth-config*))
+         (chirp-extra:*oauth-api-secret* (gethash "client_secret" *oauth-config*))
+         ;; `access-alist' remains nil unless we successfully get an access
          ;; token, to which it is assigned
          (access-alist)
          ;; *response* is a magic variable assigned to the response
@@ -197,8 +111,3 @@ access token from Twitter."
          nil
          '((:mode . "error")
            (:message . "Failed to get a verifier token. Please try again or open an issue.")))))))
-
-(defun entry ()
-  "The view rendered at /."
-  (setf (hunchentoot:content-type*) "text/html")
-  (view/index))
