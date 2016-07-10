@@ -17,18 +17,19 @@
 
 .PHONY: dist-install dist-update ql server
 
+LISP ?= sbcl
 DIST ?= $(shell cat use-dist | tr -d '\n')
 CL_ARGS = --no-sysinit --no-userinit \
           --load quicklisp/setup.lisp
 
 dist-install:
-	sbcl ${CL_ARGS} --non-interactive \
+	${LISP} ${CL_ARGS} --non-interactive \
        --eval "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
        --load blockparty.asd \
        --eval '(ql:quickload "blockparty")'
 
 quicklisp/dists/distinfo.txt:
-	sbcl ${CL_ARGS} --non-interactive \
+	${LISP} ${CL_ARGS} --non-interactive \
        --eval "(ql:update-dist \"quicklisp\")" --quit
 
 dist-update: quicklisp/dists/distinfo.txt
@@ -37,13 +38,13 @@ quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
 
 quicklisp/setup.lisp: quicklisp/quicklisp.lisp
-	sbcl ${CL_ARGS} \
+	${LISP} ${CL_ARGS} \
        --eval "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit
 
 ql: quicklisp/setup.lisp
 
 server:
-	sbcl ${CL_ARGS} \
+	${LISP} ${CL_ARGS} \
        --load blockparty.asd \
        --eval '(ql:quickload "blockparty")' \
        --eval '(blockparty:main)'
