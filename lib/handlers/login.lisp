@@ -44,11 +44,11 @@ to authorize the application."
       (chirp:oauth-request-error (err)
         ;; Probably 401 in this case
         (setq response-code (chirp:http-status err))
-        (hunchentoot:acceptor-log-message
+        (tbnl:acceptor-log-message
          ;; *acceptor* is a magic variable assigned to the acceptor
          ;; calling this handler:
          ;; http://weitz.de/hunchentoot/#*acceptor*
-         hunchentoot:*acceptor*
+         tbnl:*acceptor*
          :error
          (format nil "~d: ~a"
                  (chirp:http-status err)
@@ -56,7 +56,7 @@ to authorize the application."
     ;; *reply* is another magic variable assigned to the object
     ;; Hunchentoot uses to build its response to requests:
     ;; http://weitz.de/hunchentoot/#*reply*
-    (setf (hunchentoot:return-code hunchentoot:*reply*) response-code)
+    (setf (tbnl:return-code tbnl:*reply*) response-code)
     (if request-alist
         (let* ((uuid (write-to-string (unicly:make-v4-uuid)))
                (request-token (cdr (assoc :oauth-token request-alist)))
@@ -64,7 +64,7 @@ to authorize the application."
                ;; These are stored in Redis
                (token-cookie-key (concatenate 'string uuid ":token"))
                (secret-cookie-key (concatenate 'string uuid ":secret"))
-               (cookie (hunchentoot:set-cookie
+               (cookie (tbnl:set-cookie
                         "request-id"
                         :value uuid
                         :max-age 60
@@ -77,7 +77,7 @@ to authorize the application."
           ;;
           ;; Instead we'll just use the cookie functions and manage
           ;; sessions ourselves in Redis.
-          (hunchentoot:set-cookie* cookie)
+          (tbnl:set-cookie* cookie)
           (redis:with-connection ()
             (redis:with-pipelining
               (red:set token-cookie-key request-token)
@@ -85,8 +85,8 @@ to authorize the application."
               (red:set secret-cookie-key request-secret)
               (red:expire secret-cookie-key 60)))
 
-          (setf (hunchentoot:return-code hunchentoot:*reply*) 302)
-          (setf (hunchentoot:header-out "Location" hunchentoot:*reply*)
+          (setf (tbnl:return-code tbnl:*reply*) 302)
+          (setf (tbnl:header-out "Location" tbnl:*reply*)
                 (concatenate 'string "https://api.twitter.com/oauth/authenticate?oauth_token=" request-token))
           "Redirecting to Twitter dot com...")
       (view/html

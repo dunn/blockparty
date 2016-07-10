@@ -22,7 +22,7 @@
 (defun main ()
   "Start the server."
   (defvar blockparty (make-instance
-                       'hunchentoot:easy-acceptor
+                       'tbnl:easy-acceptor
                        :port 3000
                        :document-root "www/"
                        :access-log-destination "log/access.log"
@@ -37,15 +37,15 @@
         (yaml:parse (make-pathname :directory '(:relative "config")
                                      :name "oauth" :type "yml")))
 
-  (setq hunchentoot:*dispatch-table*
+  (setq tbnl:*dispatch-table*
         (list
-         (hunchentoot:create-regex-dispatcher "^/login/?$" 'handle/login)
-         (hunchentoot:create-regex-dispatcher "^/auth/?$" 'handle/callback)
-         (hunchentoot:create-regex-dispatcher "^/$" 'handle/root)))
+         (tbnl:create-regex-dispatcher "^/login/?$" 'handle/login)
+         (tbnl:create-regex-dispatcher "^/auth/?$" 'handle/callback)
+         (tbnl:create-regex-dispatcher "^/$" 'handle/root)))
 
   (redis:connect)
   (red:set "salt"
            (ironclad:byte-array-to-hex-string
             (ironclad:make-random-salt)))
 
-  (hunchentoot:start blockparty))
+  (tbnl:start blockparty))

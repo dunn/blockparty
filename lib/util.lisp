@@ -32,8 +32,8 @@ If the variable is unset return nil."
 (defun delete-session (session-id)
   "Erase the SESSION-ID from Redis."
   (when session-id
-    (hunchentoot:acceptor-log-message
-     hunchentoot:*acceptor* :info
+    (tbnl:acceptor-log-message
+     tbnl:*acceptor* :info
      (format nil "Deleting session ~a" session-id))
     (redis:with-connection ()
       (redis:with-pipelining

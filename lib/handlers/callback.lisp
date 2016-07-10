@@ -27,11 +27,11 @@ access token from Twitter."
          (access-alist)
          ;; *response* is a magic variable assigned to the response
          ;; *received by the handler
-         (params (hunchentoot:get-parameters* hunchentoot:*request*))
-         (session-id (hunchentoot:cookie-in "session-id" hunchentoot:*request*))
+         (params (tbnl:get-parameters* tbnl:*request*))
+         (session-id (tbnl:cookie-in "session-id" tbnl:*request*))
          (oauth-verifier (cdr (assoc "oauth_verifier" params :test #'string=))))
     (if oauth-verifier
-        (let* ((request-id (hunchentoot:cookie-in "request-id" hunchentoot:*request*))
+        (let* ((request-id (tbnl:cookie-in "request-id" tbnl:*request*))
                ;; Why are we setting the /access/ variables to the
                ;; temporary /request/ tokens?  No idea, but apparently
                ;; that's how Chirp does it.
@@ -43,11 +43,11 @@ access token from Twitter."
               (setq access-alist (chirp:oauth/access-token oauth-verifier))
             (chirp:oauth-request-error (err)
               (setq response-code (chirp:http-status err))
-              (hunchentoot:acceptor-log-message
+              (tbnl:acceptor-log-message
                ;; *acceptor* is a magic variable assigned to the
                ;; acceptor calling this handler:
                ;; http://weitz.de/hunchentoot/#*acceptor*
-               hunchentoot:*acceptor* :error (format nil "~a" err))))
+               tbnl:*acceptor* :error (format nil "~a" err))))
           (if access-alist
               (let* ((access-token (cdr (assoc "OAUTH-TOKEN" access-alist :test #'string=)))
                      (access-secret (cdr (assoc "OAUTH-TOKEN-SECRET" access-alist :test #'string=)))
@@ -61,7 +61,7 @@ access token from Twitter."
                      (cookie-passwd (concatenate 'string session-id ":passwd"))
                      (cookie-token (concatenate 'string session-id ":token"))
                      (cookie-secret (concatenate 'string session-id ":secret"))
-                     (cookie (hunchentoot:set-cookie
+                     (cookie (tbnl:set-cookie
                               "session-id"
                               :value session-id
                               :max-age 86400
@@ -70,14 +70,14 @@ access token from Twitter."
                               :secure (equal "production" (getenv "BP_ENV"))
                               :http-only t)))
 
-                ;; (hunchentoot:acceptor-log-message
-                ;;  hunchentoot:*acceptor* :debug (format nil "~a" (hunchentoot:headers-in*)))
-                ;; (hunchentoot:acceptor-log-message
-                ;;  hunchentoot:*acceptor* :debug (format nil "session: ~a" session-id))
-                ;; (hunchentoot:acceptor-log-message
-                ;;  hunchentoot:*acceptor* :debug (format nil "passwd: ~a" passwd))
+                ;; (tbnl:acceptor-log-message
+                ;;  tbnl:*acceptor* :debug (format nil "~a" (tbnl:headers-in*)))
+                ;; (tbnl:acceptor-log-message
+                ;;  tbnl:*acceptor* :debug (format nil "session: ~a" session-id))
+                ;; (tbnl:acceptor-log-message
+                ;;  tbnl:*acceptor* :debug (format nil "passwd: ~a" passwd))
 
-                (hunchentoot:set-cookie* cookie)
+                (tbnl:set-cookie* cookie)
                 (redis:with-connection ()
                   (redis:with-pipelining
                     (red:set cookie-passwd passwd)
@@ -87,18 +87,18 @@ access token from Twitter."
                     (red:set cookie-secret access-secret)
                     (red:expire cookie-secret 86400)))
 
-                (hunchentoot:acceptor-log-message
-                 hunchentoot:*acceptor* :info
+                (tbnl:acceptor-log-message
+                 tbnl:*acceptor* :info
                  (format nil "Authenticated with Twitter, starting session ~a" session-id))
 
-                (setf (hunchentoot:return-code hunchentoot:*reply*) 302)
-                (setf (hunchentoot:header-out "Location" hunchentoot:*reply*) "/")
+                (setf (tbnl:return-code tbnl:*reply*) 302)
+                (setf (tbnl:header-out "Location" tbnl:*reply*) "/")
                 "You're logged in!")
 
             ;; If authentication fails, clear the current session
             (progn
               (delete-session session-id)
-              (setf (hunchentoot:return-code hunchentoot:*reply*) 401)
+              (setf (tbnl:return-code tbnl:*reply*) 401)
               (view/index
                nil
                '((:mode . "error")
@@ -106,7 +106,7 @@ access token from Twitter."
       ;; If authentication fails, clear the current session
       (progn
         (delete-session session-id)
-        (setf (hunchentoot:return-code hunchentoot:*reply*) 401)
+        (setf (tbnl:return-code tbnl:*reply*) 401)
         (view/index
          nil
          '((:mode . "error")

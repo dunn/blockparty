@@ -19,5 +19,5 @@
 
 (defun handle/root ()
   "The view rendered at /."
-  (setf (hunchentoot:content-type*) "text/html")
+  (setf (tbnl:content-type*) "text/html")
   (view/index))
