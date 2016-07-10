@@ -181,12 +181,14 @@ access token from Twitter."
             ;; If authentication fails, clear the current session
             (progn
               (delete-session session-id)
+              (setf (hunchentoot:return-code hunchentoot:*reply*) 401)
               (view/index
                nil
                '("error" . "Failed to get an access token. Please try again or open an issue.")))))
       ;; If authentication fails, clear the current session
       (progn
         (delete-session session-id)
+        (setf (hunchentoot:return-code hunchentoot:*reply*) 401)
         (view/index
          nil
          '("error" . "Failed to get a verifier token. Please try again or open an issue."))))))
