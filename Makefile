@@ -17,20 +17,46 @@
 
 .PHONY: dist-install dist-update ql server
 
+# Only SBCL and ABCL are known to work
 LISP ?= sbcl
+
+ifeq ($(LISP),$(filter $(LISP), abcl sbcl))
+	LOAD = --load
+	EVAL = --eval
+else
+	LOAD = -load
+	EVAL = -eval
+endif
+
+ifeq ($(LISP),sbcl)
+	BATCH = --non-interactive
+	EXTRA_ARGS = --no-sysinit --no-userinit
+endif
+ifeq ($(LISP),lisp)
+	BATCH = -batch
+	EXTRA_ARGS = -nositeinit -noinit
+endif
+ifeq ($(LISP),ecl)
+	EXTRA_ARGS = -norc
+endif
+ifeq ($(LISP),abcl)
+	BATCH = --batch
+	EXTRA_ARGS = --noinform --noinit --nosystem
+endif
+
+CL_ARGS = ${LOAD} quicklisp/setup.lisp ${EXTRA_ARGS}
+
 DIST ?= $(shell cat use-dist | tr -d '\n')
-CL_ARGS = --no-sysinit --no-userinit \
-          --load quicklisp/setup.lisp
 
 dist-install:
-	${LISP} ${CL_ARGS} --non-interactive \
-       --eval "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
-       --load blockparty.asd \
-       --eval '(ql:quickload "blockparty")'
+	${LISP} ${CL_ARGS} ${BATCH} \
+       ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
+       ${LOAD} blockparty.asd \
+       ${EVAL} '(ql:quickload "blockparty")'
 
 quicklisp/dists/distinfo.txt:
-	${LISP} ${CL_ARGS} --non-interactive \
-       --eval "(ql:update-dist \"quicklisp\")" --quit
+	${LISP} ${CL_ARGS} ${BATCH} \
+       ${EVAL} "(ql:update-dist \"quicklisp\")" --quit
 
 dist-update: quicklisp/dists/distinfo.txt
 
@@ -38,13 +64,13 @@ quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
 
 quicklisp/setup.lisp: quicklisp/quicklisp.lisp
-	${LISP} ${CL_ARGS} \
-       --eval "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit
+	${LISP} ${BATCH} ${LOAD} quicklisp/quicklisp.lisp \
+       ${EVAL} "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit
 
 ql: quicklisp/setup.lisp
 
 server:
 	${LISP} ${CL_ARGS} \
-       --load blockparty.asd \
-       --eval '(ql:quickload "blockparty")' \
-       --eval '(blockparty:main)'
+       ${LOAD} blockparty.asd \
+       ${EVAL} '(ql:quickload "blockparty")' \
+       ${EVAL} '(blockparty:main)'

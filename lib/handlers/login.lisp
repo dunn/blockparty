@@ -58,7 +58,7 @@ to authorize the application."
     ;; http://weitz.de/hunchentoot/#*reply*
     (setf (tbnl:return-code tbnl:*reply*) response-code)
     (if request-alist
-        (let* ((uuid (write-to-string (unicly:make-v4-uuid)))
+        (let* ((uuid (write-to-string (uuid:make-v4-uuid)))
                (request-token (cdr (assoc :oauth-token request-alist)))
                (request-secret (cdr (assoc :oauth-token-secret request-alist)))
                ;; These are stored in Redis

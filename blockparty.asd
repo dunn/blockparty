@@ -10,7 +10,7 @@
                #:hunchentoot
                #:ironclad
                #:postmodern
-               #:unicly)
+               #:uuid)
   :serial t
   :components ((:file "package")
                (:module "lib"

@@ -51,9 +51,8 @@ access token from Twitter."
           (if access-alist
               (let* ((access-token (cdr (assoc "OAUTH-TOKEN" access-alist :test #'string=)))
                      (access-secret (cdr (assoc "OAUTH-TOKEN-SECRET" access-alist :test #'string=)))
-                     (session-id (write-to-string (unicly:make-v4-uuid)))
+                     (session-id (write-to-string (uuid:make-v4-uuid)))
                      (salt (ironclad:hex-string-to-byte-array (red:get "salt")))
-                     ;; Key base for Redis
                      (passwd (ironclad:pbkdf2-hash-password-to-combined-string
                               (ironclad:ascii-string-to-byte-array session-id)
                               :salt salt))
