@@ -20,7 +20,7 @@
 (defun view/index (&optional class flash)
   "The view rendered at the root."
   (let* ((session-id (hunchentoot:cookie-in "session-id" hunchentoot:*request*))
-         (session-vector (ironclad:ascii-string-to-byte-array session-id))
+         (session-vector (and session-id (ironclad:ascii-string-to-byte-array session-id)))
          (session-passwd (red:get (concatenate 'string session-id ":passwd"))))
 
     ;; (hunchentoot:acceptor-log-message
