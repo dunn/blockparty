@@ -17,11 +17,12 @@
 
 (in-package #:blockparty)
 
-(defun html/flash (mode message)
+(defun html/flash (flash)
   "A <div> that's displayed temporarily at the top of a page,
 usually a warning or error."
   (concatenate 'string
-               "<div class='"mode"' 'flash'><p>"message"</p></div>"))
+               "<div class='" (cdr (assoc :mode flash))
+               " flash'><p>" (cdr (assoc :message flash)) "</p></div>"))
 
 (defun html/intro (title &optional class)
   "The HTML for a page, up to the opening <body> tag."
@@ -39,6 +40,6 @@ usually a warning or error."
   "An entire HTML page."
   (concatenate 'string
                (html/intro title class)
-               (if flash (html/flash (car flash) (cdr flash)))
+               (if flash (html/flash flash))
                "<main>" content "</main>"
                (html/outro)))

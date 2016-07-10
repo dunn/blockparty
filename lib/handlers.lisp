@@ -99,8 +99,11 @@ to authorize the application."
           (setf (hunchentoot:header-out "Location" hunchentoot:*reply*)
                 (concatenate 'string "https://api.twitter.com/oauth/authenticate?oauth_token=" request-token))
           "Redirecting to Twitter dot com...")
-      ;; TODO: Make a real error page + message
-      "An error occured.")))
+      (view/html
+       nil
+       '((:mode . "error")
+         (:message . "Failed to get a request token. Please try again or open an issue."))))))
+
 
 (defun auth ()
   "When arriving from Twitter with a valid oauth_verifier, get an
@@ -184,14 +187,16 @@ access token from Twitter."
               (setf (hunchentoot:return-code hunchentoot:*reply*) 401)
               (view/index
                nil
-               '("error" . "Failed to get an access token. Please try again or open an issue.")))))
+               '((:mode . "error")
+                 (:message . "Failed to get an access token. Please try again or open an issue."))))))
       ;; If authentication fails, clear the current session
       (progn
         (delete-session session-id)
         (setf (hunchentoot:return-code hunchentoot:*reply*) 401)
         (view/index
          nil
-         '("error" . "Failed to get a verifier token. Please try again or open an issue."))))))
+         '((:mode . "error")
+           (:message . "Failed to get a verifier token. Please try again or open an issue.")))))))
 
 (defun entry ()
   "The view rendered at /."
