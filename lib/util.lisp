@@ -17,11 +17,12 @@
 
 (in-package #:blockparty)
 
-;; Implementation details from
+;; Some implementation details from
 ;; http://cl-cookbook.sourceforge.net/os.html
 (defun getenv (variable)
   "Get an environment VARIABLE.
 If the variable is unset return nil."
+  #+ABCL (ext:getenv variable)
   #+Allegro (sys:getenv variable)
   #+CMU (cdr (assoc variable ext:*environment-list* :test #'string=))
   #+ECL (si:getenv variable)
