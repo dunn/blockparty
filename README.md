@@ -16,9 +16,17 @@ which is not of the expected type FOREIGN-DATA
 backtrace output unavailable.
 ```
 
-It dies during setup in CMUCL while compiling cl+ssl with
+It dies during setup in CMUCL while compiling cl+ssl with:
 
 ```
 Undefined foreign symbol: "_TLSv1_1_client_method"
    [Condition of type KERNEL:SIMPLE-PROGRAM-ERROR]
+```
+This might be because of the ancient OpenSSL in `/usr/bin/` on OS X.
+
+Clozure-CL has trouble with libyaml:
+```
+[package libyaml.lib]
+> Error: Unable to load any of the alternatives:
+>           ("libyaml.dylib" "libyaml-0.2.dylib")
 ```

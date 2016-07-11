@@ -20,7 +20,7 @@
 # Only SBCL and ABCL are known to work
 LISP ?= sbcl
 
-ifeq ($(LISP),$(filter $(LISP), abcl sbcl))
+ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl))
 	LOAD = --load
 	EVAL = --eval
 else
@@ -28,20 +28,24 @@ else
 	EVAL = -eval
 endif
 
-ifeq ($(LISP),sbcl)
-	BATCH = --non-interactive
-	EXTRA_ARGS = --no-sysinit --no-userinit
+ifeq ($(LISP),abcl)
+	BATCH = --batch
+	EXTRA_ARGS = --noinform --noinit --nosystem
+endif
+ifeq ($(LISP),ccl)
+	BATCH = --batch
+	EXTRA_ARGS = --no-init
+endif
+ifeq ($(LISP),ecl)
+	EXTRA_ARGS = -norc
 endif
 ifeq ($(LISP),lisp)
 	BATCH = -batch
 	EXTRA_ARGS = -nositeinit -noinit
 endif
-ifeq ($(LISP),ecl)
-	EXTRA_ARGS = -norc
-endif
-ifeq ($(LISP),abcl)
-	BATCH = --batch
-	EXTRA_ARGS = --noinform --noinit --nosystem
+ifeq ($(LISP),sbcl)
+	BATCH = --non-interactive
+	EXTRA_ARGS = --no-sysinit --no-userinit
 endif
 
 CL_ARGS = ${LOAD} quicklisp/setup.lisp ${EXTRA_ARGS}
