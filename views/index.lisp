@@ -19,16 +19,13 @@
 
 (defun view/index (&optional class flash)
   "The view rendered at the root."
-  (let* ((session-id (tbnl:cookie-in "session-id" tbnl:*request*))
-         (session-vector (and session-id (ironclad:ascii-string-to-byte-array session-id)))
-         (session-passwd (red:get (concatenate 'string session-id ":passwd"))))
+  (let* ((user-id (validate-session (tbnl:cookie-in "session-id" tbnl:*request*))))
     ;; (tbnl:acceptor-log-message
     ;;  tbnl:*acceptor* :debug (format nil "headers: ~a" (tbnl:headers-in*)))
-    ;; (tbnl:acceptor-log-message
-    ;;  tbnl:*acceptor* :debug (format nil "session-id ~a, passwd ~a" session-id session-passwd))
-    (if (and session-passwd
-             (ironclad:pbkdf2-check-password session-vector session-passwd))
-        (html/page "Block Party" "<p>Logged in my dude</p>" class flash)
+    (if user-id
+        (html/page "Block Party"
+                   (concatenate 'string "<p>Welcome number " user-id "</p>")
+                   class flash)
       (html/page
        "Blick Party"
        "<p><a href='/login' title='Log in please'>Log in now</a></p>" class flash))))

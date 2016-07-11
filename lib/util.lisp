@@ -31,7 +31,8 @@ If the variable is unset return nil."
   )
 
 (defun delete-session (session-id)
-  "Erase the SESSION-ID from Redis."
+  "Erase the SESSION-ID from Redis. Assumes an open Redis connection
+and a defined `hunchentoot:*acceptor*'"
   (when session-id
     (tbnl:acceptor-log-message
      tbnl:*acceptor* :info
@@ -41,3 +42,24 @@ If the variable is unset return nil."
         (red:del (concatenate 'string session-id ":passwd"))
         (red:del (concatenate 'string session-id ":token"))
         (red:del (concatenate 'string session-id ":secret"))))))
+
+(defun validate-session (session-id)
+  "Extract the session-id from the HEADERS and check if it's still
+valid.  Returns the user ID if so, otherwise nil.  Assumes an open
+Redis connection."
+  (when session-id
+    (let ((session-vector (ironclad:ascii-string-to-byte-array session-id))
+          (session-passwd (red:get (concatenate 'string session-id ":passwd")))
+          (salt (ironclad:hex-string-to-byte-array (red:get "salt"))))
+      ;; (tbnl:acceptor-log-message
+      ;;  tbnl:*acceptor* :debug (format nil "old passwd: ~a" session-passwd))
+      ;; (tbnl:acceptor-log-message
+      ;;  tbnl:*acceptor* :debug (format nil "new passwd: ~a" (ironclad:pbkdf2-hash-password-to-combined-string
+      ;;                                                       session-vector :salt salt)))
+      (when (equal session-passwd
+                   (ironclad:pbkdf2-hash-password-to-combined-string
+                    session-vector :salt salt))
+        ;; (tbnl:acceptor-log-message
+        ;;  tbnl:*acceptor* :debug
+        ;;  (format nil "id: ~a" (red:get (concatenate 'string session-id ":id"))))
+        (red:get (concatenate 'string session-id ":id"))))))

@@ -67,6 +67,7 @@ to authorize the application."
                (cookie (tbnl:set-cookie
                         "request-id"
                         :value uuid
+                        ;; Give them a minute to log in to Twitter
                         :max-age 60
                         :path "/"
                         :secure (equal "production" (getenv "LISP_ENV"))
