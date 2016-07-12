@@ -20,7 +20,7 @@
 # Only SBCL and ABCL are known to work
 LISP ?= sbcl
 
-ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl))
+ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl ccl64))
 	LOAD = --load
 	EVAL = --eval
 else
@@ -32,7 +32,7 @@ ifeq ($(LISP),abcl)
 	BATCH = --batch
 	EXTRA_ARGS = --noinform --noinit --nosystem
 endif
-ifeq ($(LISP),ccl)
+ifeq ($(LISP),$(filter $(LISP),ccl ccl64))
 	BATCH = --batch
 	EXTRA_ARGS = --no-init
 endif

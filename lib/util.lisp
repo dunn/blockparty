@@ -24,6 +24,7 @@
 If the variable is unset return nil."
   #+ABCL (ext:getenv variable)
   #+Allegro (sys:getenv variable)
+  #+CCL (ccl:getenv variable)
   #+CMU (cdr (assoc variable ext:*environment-list* :test #'string=))
   #+ECL (si:getenv variable)
   #+LISPWORKS (lispworks:environment-variable variable)
