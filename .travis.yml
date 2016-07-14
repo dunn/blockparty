@@ -27,5 +27,6 @@ install:
     fi
 
 script:
+  - make ql
   - make dist-install
   - make test
