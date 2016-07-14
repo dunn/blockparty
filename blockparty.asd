@@ -9,6 +9,7 @@
                #:cl-yaml
                #:hunchentoot
                #:ironclad
+               #:lisp-unit
                #:postmodern
                #:uuid)
   :serial t
@@ -22,4 +23,6 @@
                                      (:file "root")))
                (:module "views"
                         :components ((:file "index")))
+               (:module "tests"
+                        :components ((:file "util-test")))
                (:file "blockparty")))

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with blockparty.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: dist-install dist-update ql server
+.PHONY: dist-install dist-update ql server tests
 
 # Only SBCL and ABCL are known to work
 LISP ?= sbcl
@@ -48,7 +48,7 @@ ifeq ($(LISP),sbcl)
 	EXTRA_ARGS = --no-sysinit --no-userinit
 endif
 
-CL_ARGS = ${LOAD} quicklisp/setup.lisp ${EXTRA_ARGS}
+CL_ARGS = ${EXTRA_ARGS} ${LOAD} quicklisp/setup.lisp
 
 DIST ?= $(shell cat use-dist | tr -d '\n')
 
@@ -78,3 +78,12 @@ server:
        ${LOAD} blockparty.asd \
        ${EVAL} '(ql:quickload "blockparty")' \
        ${EVAL} '(blockparty:main)'
+
+tests:
+	${LISP} ${BATCH} ${CL_ARGS} \
+       ${LOAD} blockparty.asd \
+       ${EVAL} '(ql:quickload "blockparty")' \
+	   	 ${EVAL} '(redis:connect)' \
+			 ${EVAL} '(setq lisp-unit:*print-errors* t)' \
+			 ${EVAL} "(lisp-unit:run-tests :all 'blockparty)" \
+	   	 ${EVAL} '(redis:disconnect)'
