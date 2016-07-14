@@ -45,9 +45,8 @@ If the variable is unset return nil."
         (red:del (concatenate 'string session-id ":secret"))))))
 
 (defun validate-session (session-id)
-  "Extract the session-id from the HEADERS and check if it's still
-valid.  Returns the user ID if so, otherwise nil.  Assumes an open
-Redis connection."
+  "Check if the SESSION-ID is still valid.  Return the user ID if so,
+otherwise nil.  Assumes an open Redis connection."
   (when session-id
     (let ((session-vector (ironclad:ascii-string-to-byte-array session-id))
           (session-passwd (red:get (concatenate 'string session-id ":passwd")))
