@@ -13,8 +13,8 @@ env:
 
 install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh;
       PATH=~/.roswell/bin:$PATH;
+      curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh;
       ros install $LISP;
     else
       brew update;
