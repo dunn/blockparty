@@ -85,5 +85,6 @@ tests:
        ${EVAL} '(ql:quickload "blockparty")' \
 	   	 ${EVAL} '(redis:connect)' \
 			 ${EVAL} '(setq lisp-unit:*print-errors* t)' \
+			 ${EVAL} '(setq lisp-unit:*print-failures* t)' \
 			 ${EVAL} "(lisp-unit:run-tests :all 'blockparty)" \
 	   	 ${EVAL} '(redis:disconnect)'

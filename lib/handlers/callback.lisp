@@ -52,6 +52,7 @@ access token from Twitter."
               (let* ((access-token (cdr (assoc "OAUTH-TOKEN" access-alist :test #'string=)))
                      (access-secret (cdr (assoc "OAUTH-TOKEN-SECRET" access-alist :test #'string=)))
                      (user-id (cdr (assoc "USER-ID" access-alist :test #'string=)))
+                     ;; NB: hex-string, /not/ ascii-string!
                      (salt (ironclad:hex-string-to-byte-array (red:get "salt")))
                      (session (make-session salt))
                      (session-id (gethash :id session))

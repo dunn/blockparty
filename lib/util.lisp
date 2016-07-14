@@ -44,31 +44,36 @@ If the variable is unset return nil."
         (red:del (concatenate 'string session-id ":token"))
         (red:del (concatenate 'string session-id ":secret"))))))
 
-(defun validate-session (session-id)
-  "Check if the SESSION-ID is still valid.  Return the user ID if so,
-otherwise nil.  Assumes an open Redis connection."
+(defun validate-session (session-id passwd salt)
+  "Validate the SESSION-ID against the provided SALT.  Return t if so,
+otherwise nil."
+  ;; We're guarding here because usually what's passed in is the
+  ;; output of `red:get' which might well be nil.
   (when session-id
-    (let ((session-vector (ironclad:ascii-string-to-byte-array session-id))
-          (session-passwd (red:get (concatenate 'string session-id ":passwd")))
-          (salt (ironclad:hex-string-to-byte-array (red:get "salt"))))
+    (when (stringp salt)
+      ;; NB: hex-string, /not/ ascii-string!
+      (setq salt (ironclad:hex-string-to-byte-array salt)))
+
+    (let ((session-vector (ironclad:ascii-string-to-byte-array session-id)))
       ;; (tbnl:acceptor-log-message
-      ;;  tbnl:*acceptor* :debug (format nil "old passwd: ~a" session-passwd))
+      ;;  tbnl:*acceptor* :debug (format nil "old passwd: ~a" passwd))
       ;; (tbnl:acceptor-log-message
       ;;  tbnl:*acceptor* :debug (format nil "new passwd: ~a" (ironclad:pbkdf2-hash-password-to-combined-string
       ;;                                                       session-vector :salt salt)))
-      (when (equal session-passwd
+      (when (equal passwd
                    (ironclad:pbkdf2-hash-password-to-combined-string
                     session-vector :salt salt))
-        ;; (tbnl:acceptor-log-message
-        ;;  tbnl:*acceptor* :debug
-        ;;  (format nil "id: ~a" (red:get (concatenate 'string session-id ":id"))))
-        (red:get (concatenate 'string session-id ":user"))))))
+        t))))
 
 (defun make-session (salt)
   "Using the provided SALT, return a hash table containing a unique
   session ID and a salted password."
+  ;; (tbnl:acceptor-log-message
+  ;;  tbnl:*acceptor* :debug (format nil "salt in: ~a" salt))
   (when (stringp salt)
-    (setq salt (ironclad:ascii-string-to-byte-array salt)))
+    (setq salt (ironclad:hex-string-to-byte-array salt)))
+  ;; (tbnl:acceptor-log-message
+  ;;  tbnl:*acceptor* :debug (format nil "salt out: ~a" salt))
   (let* ((session-id (write-to-string (uuid:make-v4-uuid)))
          (passwd (ironclad:pbkdf2-hash-password-to-combined-string
                   (ironclad:ascii-string-to-byte-array session-id)

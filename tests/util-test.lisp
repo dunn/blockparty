@@ -27,6 +27,20 @@
   (lisp-unit:assert-equal "fake_secret" (red:get "fake_session:secret"))
 
   (delete-session "fake_session")
-  (lisp-unit:assert-eq nil (red:get "fake_session:passwd"))
-  (lisp-unit:assert-eq nil (red:get "fake_session:token"))
-  (lisp-unit:assert-eq nil (red:get "fake_session:secret")))
+  (lisp-unit:assert-nil (red:get "fake_session:passwd"))
+  (lisp-unit:assert-nil (red:get "fake_session:token"))
+  (lisp-unit:assert-nil (red:get "fake_session:secret")))
+
+
+(lisp-unit:define-test validate-session-test
+  (let* ((salt (ironclad:make-random-salt))
+         (session (make-session salt)))
+    (lisp-unit:assert-true (validate-session
+                            (gethash :id session)
+                            (gethash :passwd session)
+                            salt))
+    (setq salt (ironclad:make-random-salt))
+    (lisp-unit:assert-false (validate-session
+                             (gethash :id session)
+                             (gethash :passwd session)
+                             salt))))
