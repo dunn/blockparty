@@ -2,6 +2,22 @@
 
 **WARNING:**  This is extremely a work in progress, and should not be trusted.
 
+## developing and testing
+
+Dependencies are managed by
+[Quicklisp](https://www.quicklisp.org/beta/).  You can pin it to a
+specific distribution by editing the `use-dist` file then running
+`make dist-install`.
+
+Run `make server` to start the application within the Hunchentoot
+server.
+
+Run `make tests` to run the tests.
+
+Set the `LISP` environment variable or append it to the `make`
+commands to change the implementation used (defaults to
+[SBCL](http://www.sbcl.org/)).
+
 ## compatibility
 
 - SBCL 1.3.7
