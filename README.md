@@ -5,14 +5,7 @@
 ## compatibility
 
 - SBCL 1.3.7
-- Clozure CL 1.11 (64-bit)
-
-32-bit Clozure-CL will have trouble with libyaml:
-```
-[package libyaml.lib]
-> Error: Unable to load any of the alternatives:
->           ("libyaml.dylib" "libyaml-0.2.dylib")
-```
+- Clozure CL 1.11 (64-bit; or whatever matches how you built libyaml)
 
 It almost works in ABCL except for like
 [one thing](https://github.com/edicl/hunchentoot/blob/24f638f8d01fc5f15d1169be1de944392b38d1a2/set-timeouts.lisp#L82).
