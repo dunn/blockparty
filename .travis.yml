@@ -13,16 +13,16 @@ env:
 
 install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
-      PATH=~/.roswell/bin:$PATH
-      ros install $LISP
+      curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh;
+      PATH=~/.roswell/bin:$PATH;
+      ros install $LISP;
     else
-      brew update
+      brew update;
       if [ "$LISP" = "ccl" ]; then
-        brew install clozure-cl
-        export LISP=ccl64
+        brew install clozure-cl;
+        export LISP=ccl64;
       else
-        brew install $LISP
+        brew install $LISP;
       fi
     fi
 
