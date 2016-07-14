@@ -63,4 +63,18 @@ Redis connection."
         ;; (tbnl:acceptor-log-message
         ;;  tbnl:*acceptor* :debug
         ;;  (format nil "id: ~a" (red:get (concatenate 'string session-id ":id"))))
-        (red:get (concatenate 'string session-id ":id"))))))
+        (red:get (concatenate 'string session-id ":user"))))))
+
+(defun make-session (salt)
+  "Using the provided SALT, return a hash table containing a unique
+  session ID and a salted password."
+  (when (stringp salt)
+    (setq salt (ironclad:ascii-string-to-byte-array salt)))
+  (let* ((session-id (write-to-string (uuid:make-v4-uuid)))
+         (passwd (ironclad:pbkdf2-hash-password-to-combined-string
+                  (ironclad:ascii-string-to-byte-array session-id)
+                  :salt salt))
+         (session-table (make-hash-table)))
+    (setf (gethash :id session-table) session-id)
+    (setf (gethash :passwd session-table) passwd)
+    session-table))
