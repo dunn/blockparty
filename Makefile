@@ -56,7 +56,8 @@ dist-install:
 	${LISP} ${CL_ARGS} ${BATCH} \
        ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
        ${LOAD} blockparty.asd \
-       ${EVAL} '(ql:quickload "blockparty")'
+       ${EVAL} '(ql:quickload "blockparty")' \
+			 ${EVAL} '(quit)'
 
 quicklisp/dists/distinfo.txt:
 	${LISP} ${CL_ARGS} ${BATCH} \
@@ -69,7 +70,8 @@ quicklisp/quicklisp.lisp:
 
 quicklisp/setup.lisp: quicklisp/quicklisp.lisp
 	${LISP} ${BATCH} ${LOAD} quicklisp/quicklisp.lisp \
-       ${EVAL} "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" --quit
+       ${EVAL} "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" \
+			 ${EVAL} '(quit)'
 
 ql: quicklisp/setup.lisp
 
@@ -87,4 +89,5 @@ tests:
 			 ${EVAL} '(setq lisp-unit:*print-errors* t)' \
 			 ${EVAL} '(setq lisp-unit:*print-failures* t)' \
 			 ${EVAL} "(lisp-unit:run-tests :all 'blockparty)" \
-	   	 ${EVAL} '(redis:disconnect)'
+	   	 ${EVAL} '(redis:disconnect)' \
+			 ${EVAL} '(quit)'
