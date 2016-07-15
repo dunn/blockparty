@@ -1,32 +1,39 @@
 ---
 language: common-lisp
-sudo: false
 
 os:
-  - linux
   - osx
+  - linux
 
 env:
+  global:
+    - PATH=$HOME/.roswell/bin:$PATH
   matrix:
     - LISP=sbcl
     - LISP=ccl
+    - LISP=cmucl
+  allow_failures:
+    - os: osx
+      env: LISP=cmucl
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo apt-get -qq update;
+      sudo apt-get install -y redis-server libssl-dev;
+      sudo service redis-server start;
+    fi
+  - bash "$TRAVIS_BUILD_DIR/scripts/ci.sh"
 
 install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      PATH=~/.roswell/bin:$PATH;
-      curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh;
-      ros install $LISP;
-    else
-      brew update;
-      if [ "$LISP" = "ccl" ]; then
-        brew install clozure-cl;
-        export LISP=ccl64;
-      else
-        brew install $LISP;
-      fi
+      export LISP=ros;
+    elif [ "$LISP" = "ccl" ]; then
+      export LISP=ccl64;
+    elif [ "$LISP" = "cmucl" ]; then
+      export LISP=lisp;
     fi
 
 script:
   - make ql
   - make dist-install
-  - make test
+  - make tests

@@ -19,25 +19,31 @@
 
 set -euo pipefail
 
-QL_URL=https://beta.quicklisp.org/quicklisp.lisp
-QL_SHA=4a7a5c2aebe0716417047854267397e24a44d0cce096127411e9ce9ccfeb2c17
-TMP=${TMPDIR:-"/tmp"}
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+  bash "$TRAVIS_BUILD_DIR/scripts/get-ros.sh";
 
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  SHASUM="shasum -a 256"
+  case $LISP in
+    "cmucl")
+      ros install cmu-bin
+      ros use cmu-bin
+      ;;
+    *)
+      ros install "$LISP-bin"
+      ros use "$LISP-bin"
+  esac
 else
-  SHASUM="sha256sum"
+  brew update
+  brew install redis
+  brew services start redis
+
+  case $LISP in
+    "ccl")
+      brew install clozure-cl
+      ;;
+    "cmucl")
+      brew install --devel dunn/yolo/cmucl
+      ;;
+    *)
+      brew install "$LISP"
+  esac
 fi
-
-curl -sL "$QL_URL" -o "$TMP/quicklisp.lisp"
-checksum=$(eval "$SHASUM $TMP/quicklisp.lisp")
-
-if [[ ${checksum//\ */} != "$QL_SHA" ]]; then
-  echo "Bad checksum!"
-  echo "$checksum"
-  exit 1
-fi
-
-if [[ ! -d quicklisp ]]; then mkdir quicklisp; fi
-
-mv "$TMP/quicklisp.lisp" quicklisp/quicklisp.lisp

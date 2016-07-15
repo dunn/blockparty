@@ -19,8 +19,9 @@
 
 set -euo pipefail
 
-QL_URL=https://beta.quicklisp.org/quicklisp.lisp
-QL_SHA=4a7a5c2aebe0716417047854267397e24a44d0cce096127411e9ce9ccfeb2c17
+ROS_VER=0.0.6.64
+ROS_URL="https://github.com/roswell/roswell/archive/v$ROS_VER.tar.gz"
+ROS_SHA=f9b7a3ada298e62d024b612136196d8564e36650da59b6cc72cfb6c9bdaca3c1
 TMP=${TMPDIR:-"/tmp"}
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
@@ -29,15 +30,22 @@ else
   SHASUM="sha256sum"
 fi
 
-curl -sL "$QL_URL" -o "$TMP/quicklisp.lisp"
-checksum=$(eval "$SHASUM $TMP/quicklisp.lisp")
+curl -sL "$ROS_URL" -o "$TMP/roswell-$ROS_VER.tar.gz"
+checksum=$(eval "$SHASUM $TMP/roswell-$ROS_VER.tar.gz")
 
-if [[ ${checksum//\ */} != "$QL_SHA" ]]; then
+if [[ ${checksum//\ */} != "$ROS_SHA" ]]; then
   echo "Bad checksum!"
   echo "$checksum"
   exit 1
 fi
 
-if [[ ! -d quicklisp ]]; then mkdir quicklisp; fi
+tar -C "$TMP" -xzvf "$TMP/roswell-$ROS_VER.tar.gz"
+cd "$TMP/roswell-$ROS_VER" || exit 1
 
-mv "$TMP/quicklisp.lisp" quicklisp/quicklisp.lisp
+./bootstrap
+./configure --disable-dependency-tracking \
+            --disable-silent-rules \
+            --enable-manual-generation \
+            --enable-html-generation \
+            --prefix="$HOME/.roswell"
+make install

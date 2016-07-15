@@ -20,7 +20,7 @@
 # Only SBCL and ABCL are known to work
 LISP ?= sbcl
 
-ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl ccl64))
+ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl ccl64 ros))
 	LOAD = --load
 	EVAL = --eval
 else
@@ -49,6 +49,10 @@ ifeq ($(LISP),sbcl)
 endif
 
 CL_ARGS = ${EXTRA_ARGS} ${LOAD} quicklisp/setup.lisp
+ifeq ($(LISP),ros)
+	CL_ARGS =
+  # EXTRA_ARGS = --no-rc --no-quicklisp
+endif
 
 DIST ?= $(shell cat use-dist | tr -d '\n')
 
