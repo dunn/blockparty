@@ -23,9 +23,14 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   bash "$TRAVIS_BUILD_DIR/scripts/get-ros.sh";
 
   case $LISP in
-    "cmucl")
-      ros install cmu-bin
-      ros use cmu-bin
+    # TODO: get CMUCL to find OpenSSL
+    # "cmucl")
+    #   ros install cmu-bin
+    #   ros use cmu-bin
+    #   ;;
+    "ecl")
+      ros install ecl
+      ros use ecl
       ;;
     *)
       ros install "$LISP-bin"

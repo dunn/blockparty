@@ -9,12 +9,11 @@ env:
   global:
     - PATH=$HOME/.roswell/bin:$PATH
   matrix:
-    - LISP=sbcl
     - LISP=ccl
-    - LISP=cmucl
-  allow_failures:
-    - os: osx
-      env: LISP=cmucl
+    # TODO: get CMUCL to find OpenSSL
+    # - LISP=cmucl
+    - LISP=ecl
+    - LISP=sbcl
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
