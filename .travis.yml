@@ -36,3 +36,6 @@ script:
   - make ql
   - make dist-install
   - make tests
+
+notifications:
+  email: false
