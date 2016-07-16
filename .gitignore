@@ -1,6 +1,7 @@
 /.cache
 /config/*.yml
 /dists
+/node_modules
 /quicklisp
 /sandbox
 log/*

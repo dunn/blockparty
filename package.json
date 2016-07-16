@@ -1,0 +1,26 @@
+{
+  "name": "blockparty-tests",
+  "version": "0.1.0",
+  "description": "Integration tests for blockparty",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/casperjs test tests/integration/*_test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dunn/blockparty.git"
+  },
+  "author": "Alex Dunn <dunn.alex@gmail.com> (https://twitter.com/dunndunndunn)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/dunn/blockparty/issues"
+  },
+  "homepage": "https://github.com/dunn/blockparty#readme",
+  "devDependencies": {
+    "casperjs": "^1.1.3",
+    "phantomjs-prebuilt": "^2.1.12"
+  }
+}

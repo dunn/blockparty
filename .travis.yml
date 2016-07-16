@@ -1,9 +1,7 @@
 ---
-language: common-lisp
-
-os:
-  - osx
-  - linux
+language: node_js
+node_js:
+  - "6"
 
 env:
   global:
@@ -15,27 +13,28 @@ env:
     - LISP=ecl
     - LISP=sbcl
 
+services:
+  - redis-server
+
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      sudo apt-get -qq update;
-      sudo apt-get install -y redis-server libssl-dev;
-      sudo service redis-server start;
-    fi
+  - npm install
+  - sudo apt-get -qq update;
+  - sudo apt-get install -y libssl-dev;
   - bash "$TRAVIS_BUILD_DIR/scripts/ci.sh"
+  - export LISP=ros;
 
-install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      export LISP=ros;
-    elif [ "$LISP" = "ccl" ]; then
-      export LISP=ccl64;
-    elif [ "$LISP" = "cmucl" ]; then
-      export LISP=lisp;
-    fi
-
-script:
+before_script:
+  - mv config/oauth.yml.template config/oauth.yml
   - make ql
   - make dist-install
+  - nohup make server &
+
+script:
   - make tests
+  - cat nohup.out
+  - curl -IL localhost:3000
+  - cat log/access.log
+  - npm test
 
 notifications:
   email: false
