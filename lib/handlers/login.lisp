@@ -20,25 +20,25 @@
 ;; (defvar request-alist nil)
 ;; (defvar mip nil)
 ;; (handler-case
-;;     (setq request-alist (chirp:oauth/request-token (gethash "callback_url" *oauth-config*)))
+;;     (setq request-alist (chirp:oauth/request-token (get-app-var "callback_url")))
 ;;   (chirp:oauth-request-error (err)
 ;;     (setq mip (chirp:http-body err))))
 
 (defun handle/login ()
   "Get a request token from Twitter, then redirect the user to Twitter
 to authorize the application."
-  (let (;; *oauth-config* is a magic variable set by `main'
-        (chirp-extra:*oauth-api-key* (gethash "client_key" *oauth-config*))
-        (chirp-extra:*oauth-api-secret* (gethash "client_secret" *oauth-config*))
+  (let ((chirp-extra:*oauth-api-key* (get-app-var "client_key"))
+        (chirp-extra:*oauth-api-secret* (get-app-var "client_secret"))
         ;; `request-alist' remains nil unless we successfully get a request
         ;; token, to which it is assigned
         (request-alist)
         ;; Default to 302 for a redirect to Twitter's auth page in
         ;; the case of a successful call to oauth/request-token
         (response-code 302))
+
     ;; http://stackoverflow.com/a/13628395
     (handler-case
-        (setq request-alist (chirp:oauth/request-token (gethash "callback_url" *oauth-config*)))
+        (setq request-alist (chirp:oauth/request-token (get-app-var "callback_url")))
       ;; If the request fails, log the error and leave `request-alist'
       ;; unset
       (chirp:oauth-request-error (err)
@@ -90,7 +90,7 @@ to authorize the application."
           (setf (tbnl:header-out "Location" tbnl:*reply*)
                 (concatenate 'string "https://api.twitter.com/oauth/authenticate?oauth_token=" request-token))
           "Redirecting to Twitter dot com...")
-      (view/html
+      (view/index
        nil
        '((:mode . "error")
          (:message . "Failed to get a request token. Please try again or open an issue."))))))

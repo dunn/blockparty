@@ -20,8 +20,8 @@
 (defun handle/callback ()
   "When arriving from Twitter with a valid oauth_verifier, get an
 access token from Twitter."
-  (let* ((chirp-extra:*oauth-api-key* (gethash "client_key" *oauth-config*))
-         (chirp-extra:*oauth-api-secret* (gethash "client_secret" *oauth-config*))
+  (let* ((chirp-extra:*oauth-api-key* (get-app-var "client_key"))
+         (chirp-extra:*oauth-api-secret* (get-app-var "client_secret"))
          ;; `access-alist' remains nil unless we successfully get an access
          ;; token, to which it is assigned
          (access-alist)
@@ -30,6 +30,7 @@ access token from Twitter."
          (params (tbnl:get-parameters* tbnl:*request*))
          (session-id (tbnl:cookie-in "session-id" tbnl:*request*))
          (oauth-verifier (cdr (assoc "oauth_verifier" params :test #'string=))))
+
     (if oauth-verifier
         (let* ((request-id (tbnl:cookie-in "request-id" tbnl:*request*))
                ;; Why are we setting the /access/ variables to the

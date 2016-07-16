@@ -31,6 +31,13 @@ If the variable is unset return nil."
   #+SBCL (sb-unix::posix-getenv variable)
   )
 
+(defun get-app-var (variable)
+  "Return the value of VARIABLE, first checking the environment then
+  checking `*oauth-config*'.  Return nil if unset."
+  (or (getenv variable)
+      ;; *oauth-config* is a magic variable set by `main'
+      (gethash variable *oauth-config*)))
+
 (defun delete-session (session-id)
   "Erase the SESSION-ID from Redis. Assumes an open Redis connection."
   (when session-id
