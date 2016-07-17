@@ -41,8 +41,10 @@ If the variable is unset return nil."
     (redis:with-connection ()
       (redis:with-pipelining
         (red:del (concatenate 'string session-id ":passwd"))
+        (red:del (concatenate 'string session-id ":screen-name"))
+        (red:del (concatenate 'string session-id ":secret"))
         (red:del (concatenate 'string session-id ":token"))
-        (red:del (concatenate 'string session-id ":secret"))))))
+        (red:del (concatenate 'string session-id ":user-id"))))))
 
 (defun validate-session (session-id passwd salt)
   "Validate the SESSION-ID against the provided SALT.  Return t if so,
