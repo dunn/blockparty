@@ -44,8 +44,7 @@
          (tbnl:create-regex-dispatcher "^/$" 'handle/root)))
 
   (redis:connect)
-  ;; https://bugs.launchpad.net/sbcl/+bug/1600654
-  #-(or :abcl :cmucl :ecl) (setf *random-state* (make-random-state t))
+  (setf *random-state* (make-random-state t))
   (red:set "salt" (ironclad:byte-array-to-hex-string
                    (ironclad:make-random-salt)))
   (tbnl:start blockparty))
