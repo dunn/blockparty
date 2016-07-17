@@ -28,7 +28,7 @@
                        :access-log-destination "log/access.log"
                        :message-log-destination "log/message.log"))
 
-  ;; Load the OAuth settings from ../oauth.yml
+  ;; Load the OAuth settings from config/oauth.yml
   ;;
   ;; yaml:parse returns a hash accessed as
   ;; (gethash "method" oauth-parameters) => "HMAC-SHA1"
