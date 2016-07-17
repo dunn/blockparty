@@ -17,14 +17,14 @@
 
 (in-package #:blockparty)
 
-(defun html/flash (flash)
+(defun page/flash (flash)
   "A <div> that's displayed temporarily at the top of a page,
 usually a warning or error."
   (concatenate 'string
                "<div class='" (cdr (assoc :mode flash))
                " flash'><p>" (cdr (assoc :message flash)) "</p></div>"))
 
-(defun html/intro (title &optional class)
+(defun page/intro (title &optional class)
   "The HTML for a page, up to the opening <body> tag."
   (concatenate 'string
                "<!DOCTYPE html><html class='"class"'><head><meta charset='utf-8'>"
@@ -32,14 +32,15 @@ usually a warning or error."
                "<link href='/stylesheets/app.css' rel='stylesheet' type='text/css' />"
                "<title>"title"</title></head><body>"))
 
-(defun html/outro ()
+(defun page/outro ()
   "The HTML for a page, from the deferred JavaScript to the end."
-  "<!--[if lt IE 9]><script async defer src='//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js'></script><![endif]--></body></html>")
+  "<script async defer src='/scripts/application.js'></script>
+  <!--[if lt IE 9]><script async defer src='//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js'></script><![endif]--></body></html>")
 
-(defun html/page (title content &optional class flash)
+(defun page/full (title content &optional class flash)
   "An entire HTML page."
   (concatenate 'string
-               (html/intro title class)
-               (if flash (html/flash flash))
+               (page/intro title class)
+               (if flash (page/flash flash))
                "<main>" content "</main>"
-               (html/outro)))
+               (page/outro)))

@@ -32,14 +32,16 @@
   :serial t
   :components ((:file "package")
                (:module "lib"
-                        :components ((:file "html")
-                                     (:file "util")))
+                        :components ((:file "util")))
                (:module "lib/handlers"
                         :components ((:file "callback")
                                      (:file "login")
                                      (:file "root")))
                (:module "views"
                         :components ((:file "index")))
+               (:module "views/partials"
+                        :components ((:file "forms")
+                                     (:file "page")))
                (:module "tests"
                         :components ((:file "util-test")))
                (:file "blockparty")))

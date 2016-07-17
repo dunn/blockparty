@@ -19,21 +19,27 @@
 
 (defun view/index (&optional class flash)
   "The view rendered at the root."
+  ;; TODO: move the validity-checking to `handle/root'
   (let* ((session-id (tbnl:cookie-in "session-id" tbnl:*request*))
          (salt (red:get "salt"))
          (passwd (red:get (concatenate 'string session-id ":passwd")))
+         (screen-name (red:get (concatenate 'string session-id ":screen-name")))
          (valid (validate-session session-id passwd salt)))
 ;;     (tbnl:acceptor-log-message
 ;;      tbnl:*acceptor* :debug (format nil "view/index session: ~a
 ;; view/index salt: ~a
 ;; " session-id salt))
     (if valid
-        (html/page "Block Party"
-                   (concatenate 'string
-                                "<p>Welcome number "
-                                (red:get (concatenate 'string session-id ":user"))
-                                "</p>")
-                   class flash)
-      (html/page
-       "Blick Party"
+        (page/full
+         "Block Party"
+         (concatenate 'string
+                      "<h1>Hi @" screen-name "</h1>"
+                      "<p>You're probably here because you need to "
+                      "block or mute some assholes on Twitter dot com.  "
+                      "Create a filter with the form below and get going.</p>"
+                      (form/filters))
+         class flash)
+        ;; If you're not logged in
+      (page/full
+       "Block Party"
        "<p><a href='/login' title='Log in please'>Log in now</a></p>" class flash))))
