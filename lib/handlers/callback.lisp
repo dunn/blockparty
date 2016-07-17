@@ -49,9 +49,12 @@ access token from Twitter."
                ;; http://weitz.de/hunchentoot/#*acceptor*
                tbnl:*acceptor* :error (format nil "~a" err))))
           (if access-alist
-              (let* ((access-token (cdr (assoc "OAUTH-TOKEN" access-alist :test #'string=)))
+              (let* (;; The alist returned by oauth/access-token has
+                     ;; uppercased keys
+                     (access-token (cdr (assoc "OAUTH-TOKEN" access-alist :test #'string=)))
                      (access-secret (cdr (assoc "OAUTH-TOKEN-SECRET" access-alist :test #'string=)))
                      (user-id (cdr (assoc "USER-ID" access-alist :test #'string=)))
+                     (screen-name (cdr (assoc "SCREEN-NAME" access-alist :test #'string=)))
                      ;; NB: hex-string, /not/ ascii-string!
                      (salt (ironclad:hex-string-to-byte-array (red:get "salt")))
                      (session (make-session salt))
@@ -76,10 +79,11 @@ access token from Twitter."
                 (tbnl:set-cookie* cookie)
                 (redis:with-connection ()
                   (redis:with-pipelining
-                    (red:setex (concatenate 'string session-id ":user") 86400 user-id)
                     (red:setex (concatenate 'string session-id ":passwd") 86400 (gethash :passwd session))
+                    (red:setex (concatenate 'string session-id ":screen-name") 86400 screen-name)
+                    (red:setex (concatenate 'string session-id ":secret") 86400 access-secret)
                     (red:setex (concatenate 'string session-id ":token") 86400 access-token)
-                    (red:setex (concatenate 'string session-id ":secret") 86400 access-secret)))
+                    (red:setex (concatenate 'string session-id ":user-id") 86400 user-id)))
 
                 (tbnl:acceptor-log-message
                  tbnl:*acceptor* :info
