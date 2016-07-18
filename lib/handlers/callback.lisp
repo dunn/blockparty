@@ -97,7 +97,7 @@ access token from Twitter."
             (progn
               (delete-session session-id)
               (setf (tbnl:return-code tbnl:*reply*) 401)
-              (view/index
+              (view/login
                nil
                '((:mode . "error")
                  (:message . "Failed to get an access token. Please try again or open an issue."))))))
@@ -105,7 +105,7 @@ access token from Twitter."
       (progn
         (delete-session session-id)
         (setf (tbnl:return-code tbnl:*reply*) 401)
-        (view/index
+        (view/login
          nil
          '((:mode . "error")
            (:message . "Failed to get a verifier token. Please try again or open an issue.")))))))

@@ -37,7 +37,8 @@
                                      (:file "handlers/login")
                                      (:file "handlers/root")))
                (:module "views"
-                        :components ((:file "index")
+                        :components ((:file "login")
+                                     (:file "main")
                                      (:file "partials/forms")
                                      (:file "partials/page")))
                (:module "tests"
