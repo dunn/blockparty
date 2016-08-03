@@ -23,8 +23,5 @@
    "Block Party"
    (concatenate 'string
                 "<h1>Hi @" screen-name "</h1>"
-                "<p>You're probably here because you need to "
-                "block or mute some assholes on Twitter dot com.  "
-                "Create a filter with the form below and get going.</p>"
                 (form/filters))
    class flash))
