@@ -63,7 +63,7 @@ buildapp:
 	bash scripts/get-buildapp.sh
 
 # See http://www.xach.com/lisp/buildapp/
-blockparty: system-index.txt buildapp
+bin/blockparty: system-index.txt buildapp
 	buildapp --entry blockparty:main \
 	         --load-system blockparty \
 	         --asdf-path . \
