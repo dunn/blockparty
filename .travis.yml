@@ -5,7 +5,7 @@ node_js:
 
 env:
   global:
-    - PATH="~/.linuxbrew/bin:~/.linuxbrew/sbin:$PATH"
+    - PATH="~/.linuxbrew/bin:~/.linuxbrew/sbin:/usr/local/bin:$PATH"
   matrix:
     - LISP=clozure-cl
     # TODO: get CMUCL to find OpenSSL
@@ -17,6 +17,8 @@ services:
   - redis-server
 
 before_install:
+  - sudo mkdir -p /usr/local
+  - sudo chown -R "$USER:" /usr/local
   - HOME=/home/linuxbrew
   - sudo mkdir $HOME
   - sudo chown "$USER:" $HOME
