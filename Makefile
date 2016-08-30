@@ -15,7 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with blockparty.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: dist-install dist-update ql server tests
+.PHONY: buildapp clean dist-update server tests
+
+clean:
+	rm blockparty
 
 # Only SBCL and ABCL are known to work
 LISP ?= sbcl
@@ -56,18 +59,23 @@ endif
 
 DIST ?= $(shell cat use-dist | tr -d '\n')
 
-dist-install:
-	${LISP} ${CL_ARGS} ${BATCH} \
-       ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
-       ${LOAD} blockparty.asd \
-       ${EVAL} '(ql:quickload "blockparty")' \
-			 ${EVAL} '(quit)'
+buildapp:
+	bash scripts/get-buildapp.sh
+
+# See http://www.xach.com/lisp/buildapp/
+blockparty: system-index.txt buildapp
+	buildapp --entry blockparty:main \
+				   --load-system blockparty \
+					 --asdf-path . \
+           --output blockparty \
+           --manifest-file system-index.txt
+
+dist-install: quicklisp/dists/distinfo.txt
 
 quicklisp/dists/distinfo.txt:
 	${LISP} ${CL_ARGS} ${BATCH} \
-       ${EVAL} "(ql:update-dist \"quicklisp\")" --quit
-
-dist-update: quicklisp/dists/distinfo.txt
+    ${EVAL} "(ql:update-dist \"quicklisp\")" \
+	  --quit
 
 quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
@@ -77,15 +85,23 @@ quicklisp/setup.lisp: quicklisp/quicklisp.lisp
        ${EVAL} "(quicklisp-quickstart:install :path \"${PWD}/quicklisp\")" \
 			 ${EVAL} '(quit)'
 
-ql: quicklisp/setup.lisp
-
-server:
+server: system-index.txt
 	${LISP} ${CL_ARGS} \
        ${LOAD} blockparty.asd \
        ${EVAL} '(ql:quickload "blockparty")' \
-       ${EVAL} '(blockparty:main)'
+       ${EVAL} '(blockparty:main nil)'
 
-tests:
+# For buildapp
+# see https://github.com/xach/humblecast/blob/master/Makefile
+system-index.txt: quicklisp/setup.lisp
+	${LISP} ${CL_ARGS} ${BATCH} \
+       ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
+       ${LOAD} blockparty.asd \
+       ${EVAL} '(ql:quickload "blockparty")' \
+		   ${EVAL} '(ql:write-asdf-manifest-file "system-index.txt")'
+			 ${EVAL} '(quit)'
+
+tests: system-index.txt
 	${LISP} ${BATCH} ${CL_ARGS} \
        ${LOAD} blockparty.asd \
        ${EVAL} '(ql:quickload "blockparty")' \

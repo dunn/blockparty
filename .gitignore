@@ -1,8 +1,10 @@
+/blockparty
 /.cache
 /config/*.yml
 /dists
 /node_modules
 /quicklisp
 /sandbox
+/system-index.txt
 log/*
 !log/.keep

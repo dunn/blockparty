@@ -5,7 +5,7 @@ node_js:
 
 env:
   global:
-    - PATH=$HOME/.roswell/bin:$PATH
+    - PATH=$HOME/.roswell/bin:/usr/local/bin:$PATH
   matrix:
     - LISP=ccl
     # TODO: get CMUCL to find OpenSSL
@@ -21,17 +21,15 @@ before_install:
   - sudo apt-get -qq update;
   - sudo apt-get install -y libssl-dev;
   - bash "$TRAVIS_BUILD_DIR/scripts/ci.sh"
-  - export LISP=ros;
 
 before_script:
   - mv config/oauth.yml.template config/oauth.yml
-  - make ql
-  - make dist-install
-  - nohup make server &
+  - make blockparty
+  - export LISP=ros;
 
 script:
   - make tests
-  - cat nohup.out
+  - ./blockparty
   - curl -IL localhost:3000
   - cat log/access.log
   - npm test

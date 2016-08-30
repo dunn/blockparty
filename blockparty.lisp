@@ -19,8 +19,9 @@
 
 (in-package #:blockparty)
 
-(defun main ()
-  "Start the server."
+(defun main (argv)
+  "Start the server, ignoring ARGV"
+  (declare (ignore argv))
   (defvar blockparty (make-instance
                        'tbnl:easy-acceptor
                        :port 3000
@@ -47,4 +48,5 @@
   (setf *random-state* (make-random-state t))
   (red:set "salt" (ironclad:byte-array-to-hex-string
                    (ironclad:make-random-salt)))
-  (tbnl:start blockparty))
+  (tbnl:start blockparty)
+  (sb-impl::toplevel-repl nil))
