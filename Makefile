@@ -65,17 +65,15 @@ buildapp:
 # See http://www.xach.com/lisp/buildapp/
 blockparty: system-index.txt buildapp
 	buildapp --entry blockparty:main \
-				   --load-system blockparty \
-					 --asdf-path . \
-					 --output bin/blockparty \
-					 --manifest-file system-index.txt
+	         --load-system blockparty \
+	         --asdf-path . \
+	         --output bin/blockparty \
+	         --manifest-file system-index.txt
 
 dist-install: quicklisp/dists/distinfo.txt
 
 quicklisp/dists/distinfo.txt:
-	${LISP} ${CL_ARGS} ${BATCH} \
-    ${EVAL} "(ql:update-dist \"quicklisp\")" \
-	  --quit
+	${LISP} ${CL_ARGS} ${BATCH} ${EVAL} "(ql:update-dist \"quicklisp\")" ${EVAL} '(quit)'
 
 quicklisp/quicklisp.lisp:
 	bash scripts/get-ql.sh
@@ -87,27 +85,27 @@ quicklisp/setup.lisp: quicklisp/quicklisp.lisp
 
 server: system-index.txt
 	${LISP} ${CL_ARGS} \
-       ${LOAD} blockparty.asd \
-       ${EVAL} '(ql:quickload "blockparty")' \
-       ${EVAL} '(blockparty:main nil)'
+	     ${LOAD} blockparty.asd \
+	     ${EVAL} '(ql:quickload "blockparty")' \
+	     ${EVAL} '(blockparty:main nil)'
 
 # For buildapp
 # see https://github.com/xach/humblecast/blob/master/Makefile
 system-index.txt: quicklisp/setup.lisp
 	${LISP} ${CL_ARGS} ${BATCH} \
-       ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
-       ${LOAD} blockparty.asd \
-       ${EVAL} '(ql:quickload "blockparty")' \
-		   ${EVAL} '(ql:write-asdf-manifest-file "system-index.txt")' \
-			 ${EVAL} '(quit)'
+	     ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
+	     ${LOAD} blockparty.asd \
+	     ${EVAL} '(ql:quickload "blockparty")' \
+	     ${EVAL} '(ql:write-asdf-manifest-file "system-index.txt")' \
+	     ${EVAL} '(quit)'
 
 tests: system-index.txt
 	${LISP} ${BATCH} ${CL_ARGS} \
-       ${LOAD} blockparty.asd \
-       ${EVAL} '(ql:quickload "blockparty")' \
+	     ${LOAD} blockparty.asd \
+	     ${EVAL} '(ql:quickload "blockparty")' \
 	   	 ${EVAL} '(redis:connect)' \
-			 ${EVAL} '(setq lisp-unit:*print-errors* t)' \
-			 ${EVAL} '(setq lisp-unit:*print-failures* t)' \
-			 ${EVAL} "(lisp-unit:run-tests :all 'blockparty)" \
-	   	 ${EVAL} '(redis:disconnect)' \
-			 ${EVAL} '(quit)'
+	     ${EVAL} '(setq lisp-unit:*print-errors* t)' \
+	     ${EVAL} '(setq lisp-unit:*print-failures* t)' \
+	     ${EVAL} "(lisp-unit:run-tests :all 'blockparty)" \
+	     ${EVAL} '(redis:disconnect)' \
+	     ${EVAL} '(quit)'
