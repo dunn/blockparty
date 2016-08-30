@@ -13,6 +13,12 @@ env:
     - LISP=ecl
     - LISP=sbcl
 
+matrix:
+  allow_failures:
+    # until their linuxbrew formulae are fixed
+    env: LISP=ecl
+    env: LISP=clozure-cl
+
 services:
   - redis-server
 
@@ -37,6 +43,7 @@ before_script:
 script:
   - make tests
   - bin/serve
+  - sleep 8
   - curl -IL localhost:3000
   - cat log/access.log
   - npm test
