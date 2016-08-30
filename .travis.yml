@@ -16,8 +16,8 @@ env:
 matrix:
   allow_failures:
     # until their linuxbrew formulae are fixed
-    env: LISP=ecl
-    env: LISP=clozure-cl
+    - env: LISP=ecl
+    - env: LISP=clozure-cl
 
 services:
   - redis-server
