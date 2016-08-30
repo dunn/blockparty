@@ -42,11 +42,13 @@ before_script:
 
 script:
   - make tests
-  - bin/serve
-  - sleep 8
-  - curl -IL localhost:3000
-  - cat log/access.log
-  - npm test
+  - if [[ "$TRAVIS_EVENT_TYPE" == "push" ]]; then
+      bin/serve;
+      sleep 8;
+      curl -IL localhost:3000;
+      cat log/access.log;
+      npm test;
+    fi
 
 notifications:
   email: false
