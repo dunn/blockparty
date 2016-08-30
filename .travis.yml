@@ -5,9 +5,9 @@ node_js:
 
 env:
   global:
-    - PATH=$HOME/.roswell/bin:/usr/local/bin:$PATH
+    - PATH="~/.linuxbrew/bin:~/.linuxbrew/sbin:$PATH"
   matrix:
-    - LISP=ccl
+    - LISP=clozure-cl
     # TODO: get CMUCL to find OpenSSL
     # - LISP=cmucl
     - LISP=ecl
@@ -17,19 +17,24 @@ services:
   - redis-server
 
 before_install:
-  - npm install
-  - sudo apt-get -qq update;
-  - sudo apt-get install -y libssl-dev;
-  - bash "$TRAVIS_BUILD_DIR/scripts/ci.sh"
+  - HOME=/home/linuxbrew
+  - sudo mkdir $HOME
+  - sudo chown "$USER:" $HOME
+  - LINUXBREW=$HOME/.linuxbrew
+  - mkdir $LINUXBREW
+  - curl -L https://github.com/Linuxbrew/brew/tarball/master | tar xz -m --strip 1 -C $LINUXBREW
+  - export PATH="$LINUXBREW/bin:$LINUXBREW/sbin:$PATH"
+  - brew update || brew update
+  - brew install openssl libyaml "$LISP"
+  - if [[ "$LISP" == "clozure-cl" ]]; then export LISP=ccl64; fi
+  - make blockparty
 
 before_script:
   - mv config/oauth.yml.template config/oauth.yml
-  - make blockparty
-  - export LISP=ros;
 
 script:
   - make tests
-  - ./blockparty
+  - bin/serve
   - curl -IL localhost:3000
   - cat log/access.log
   - npm test

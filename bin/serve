@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [[ -f "$(dirname ${BASH_SOURCE[0]})/../party.pid" ]]; then
+  PID=$(cat "$(dirname ${BASH_SOURCE[0]})/../party.pid")
+  echo "ERROR: blockparty is already running (PID $PID)" >&2
+  exit 1
+fi
+
+"$(dirname ${BASH_SOURCE[0]})/blockparty" &
+PID="$!"
+echo "Running blockparty with PID $PID"
+echo "$PID" > party.pid

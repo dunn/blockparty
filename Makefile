@@ -67,8 +67,8 @@ blockparty: system-index.txt buildapp
 	buildapp --entry blockparty:main \
 				   --load-system blockparty \
 					 --asdf-path . \
-           --output blockparty \
-           --manifest-file system-index.txt
+					 --output bin/blockparty \
+					 --manifest-file system-index.txt
 
 dist-install: quicklisp/dists/distinfo.txt
 
@@ -98,7 +98,7 @@ system-index.txt: quicklisp/setup.lisp
        ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
        ${LOAD} blockparty.asd \
        ${EVAL} '(ql:quickload "blockparty")' \
-		   ${EVAL} '(ql:write-asdf-manifest-file "system-index.txt")'
+		   ${EVAL} '(ql:write-asdf-manifest-file "system-index.txt")' \
 			 ${EVAL} '(quit)'
 
 tests: system-index.txt

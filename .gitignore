@@ -1,4 +1,4 @@
-/blockparty
+/bin/blockparty
 /.cache
 /config/*.yml
 /dists
