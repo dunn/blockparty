@@ -49,4 +49,4 @@
   (red:set "salt" (ironclad:byte-array-to-hex-string
                    (ironclad:make-random-salt)))
   (tbnl:start blockparty)
-  (sb-impl::toplevel-repl nil))
+  (loop (sleep 10)))
