@@ -22,7 +22,7 @@ var username = system.env.BP_TEST_USER;
 var password = system.env.BP_TEST_PASS;
 var hostport = 'http://localhost:3000';
 
-casper.test.begin('Authenticate the app via Twitter', 2, function(test) {
+casper.test.begin('Authenticate the app via Twitter', 3, function(test) {
   casper.start(hostport + '/login', function() {
     return this.fill(
       'form[action*="https://api.twitter.com/oauth/authenticate"]',
@@ -36,6 +36,13 @@ casper.test.begin('Authenticate the app via Twitter', 2, function(test) {
     });
     test.assertEqual(h1, 'Hi @' + username, 'Username is in the <h1>');
     test.assertExists('form[action="/block"]', "Block composer form is present");
+  });
+
+  casper.thenOpen(hostport + '/logout', function() {
+    var login = this.evaluate(function() {
+      return document.querySelector('.menu a').href;
+    });
+    test.assertEqual(login, hostport + '/login', 'User is logged out');
   });
 
   casper.thenOpen('https://twitter.com/logout', function() {
