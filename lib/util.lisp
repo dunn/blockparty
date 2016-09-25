@@ -40,18 +40,17 @@ If the variable is unset return nil."
 
 (defun delete-session (session-id)
   "Erase the SESSION-ID from Redis. Assumes an open Redis connection."
-  (when session-id
-    (when (boundp 'tbnl:*acceptor*)
-      (tbnl:acceptor-log-message
-       tbnl:*acceptor* :info
-       (format nil "Deleting session ~a" session-id)))
+  (when (and session-id (boundp 'tbnl:*acceptor*))
     (redis:with-connection ()
       (redis:with-pipelining
-        (red:del (concatenate 'string session-id ":passwd"))
+          (red:del (concatenate 'string session-id ":passwd"))
         (red:del (concatenate 'string session-id ":screen-name"))
         (red:del (concatenate 'string session-id ":secret"))
         (red:del (concatenate 'string session-id ":token"))
-        (red:del (concatenate 'string session-id ":user-id"))))))
+        (red:del (concatenate 'string session-id ":user-id"))))
+    (tbnl:acceptor-log-message
+     tbnl:*acceptor* :info
+     (format nil "Destroyed session ~a" session-id))))
 
 (defun validate-session (session-id passwd salt)
   "Validate the SESSION-ID against the provided SALT.  Return t if so,
