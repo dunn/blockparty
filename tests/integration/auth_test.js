@@ -38,6 +38,10 @@ casper.test.begin('Authenticate the app via Twitter', 2, function(test) {
     test.assertExists('form[action="/block"]', "Block composer form is present");
   });
 
+  casper.thenOpen('https://twitter.com/logout', function() {
+    return this.fill('form[action*="/logout"]', {}, true);
+  });
+
   casper.run(function() {
     test.done();
   });

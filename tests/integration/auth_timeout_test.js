@@ -41,6 +41,10 @@ casper.test.begin('Authenticate the app via Twitter', 1, function(test) {
     test.assertEquals(errMessage.indexOf('Took too long to authenticate with Twitter'), 0);
   });
 
+  casper.thenOpen('https://twitter.com/logout', function() {
+    return this.fill('form[action*="/logout"]', {}, true);
+  });
+
   casper.run(function() {
     test.done();
   });
