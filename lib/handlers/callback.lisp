@@ -28,28 +28,56 @@ access token from Twitter."
          ;; *request* is a magic variable assigned to the request
          ;; *received by the handler
          (params (tbnl:get-parameters* tbnl:*request*))
-         (session-id (tbnl:cookie-in "session-id" tbnl:*request*))
          (oauth-verifier (cdr (assoc "oauth_verifier" params :test #'string=))))
 
-    (if oauth-verifier
-        (let* ((request-id (tbnl:cookie-in "request-id" tbnl:*request*))
-               ;; Why are we setting the /access/ variables to the
-               ;; temporary /request/ tokens?  No idea, but apparently
-               ;; that's how Chirp does it.
-               (chirp-extra:*oauth-access-token*
-                (red:get (concatenate 'string request-id ":token")))
-               (chirp-extra:*oauth-access-secret*
-                (red:get (concatenate 'string request-id ":secret"))))
-          (handler-case
-              (setq access-alist (chirp:oauth/access-token oauth-verifier))
-            (chirp:oauth-request-error (err)
-              (setq response-code (chirp:http-status err))
-              (tbnl:acceptor-log-message
-               ;; *acceptor* is a magic variable assigned to the
-               ;; acceptor calling this handler:
-               ;; http://weitz.de/hunchentoot/#*acceptor*
-               tbnl:*acceptor* :error (format nil "~a" err))))
-          (if access-alist
+    (if (not oauth-verifier)
+        (progn
+          (setf (tbnl:return-code tbnl:*reply*) 401)
+          (view/login
+           nil
+           '((:mode . "error")
+             (:message . "Failed to get a verifier token. Please try again or open an issue."))))
+      (let* (
+             ;; The cookie corresponding to the Request Token.  When the
+             ;; Request Token is authorized, the response from Twitter
+             ;; includes the token, so this isn't strictly necessary; but
+             ;; pinning it to a cookie makes it a little harder for a
+             ;; third party to swipe the token and verifier and get an
+             ;; Access Token.
+             (request-id (tbnl:cookie-in "request-id" tbnl:*request*))
+             ;; Why are we setting an /access/ token variable to the
+             ;; temporary /request/ token?  No idea, but apparently that's
+             ;; how Chirp does it.
+             (chirp-extra:*oauth-access-token*
+              (red:get (concatenate 'string request-id ":token"))))
+        (if (not chirp-extra:*oauth-access-token*)
+            (progn
+              (setf (tbnl:return-code tbnl:*reply*) 401)
+              (view/login
+               nil
+               '((:mode . "error")
+                 (:message . "Took too long to authenticate with Twitter. Please try again or open an issue."))))
+          (progn
+            ;; Request an Access Token from Twitter, handling any error
+            ;; responses.  See https://oauth.net/core/1.0a/#auth_step3
+            (handler-case
+                (setq access-alist (chirp:oauth/access-token oauth-verifier))
+              (chirp:oauth-request-error (err)
+                (setq response-code (chirp:http-status err))
+                (tbnl:acceptor-log-message
+                 ;; *acceptor* is a magic variable assigned to the
+                 ;; acceptor calling this handler:
+                 ;; http://weitz.de/hunchentoot/#*acceptor*
+                 tbnl:*acceptor* :error (format nil "~a" err))))
+
+            (if (not access-alist)
+                (progn
+                  (setf (tbnl:return-code tbnl:*reply*) 401)
+                  (view/login
+                   nil
+                   '((:mode . "error")
+                     (:message . "Failed to get an access token. Please try again or open an issue."))))
+
               (let* (;; The alist returned by oauth/access-token has
                      ;; uppercased keys
                      (access-token (cdr (assoc "OAUTH-TOKEN" access-alist :test #'string=)))
@@ -80,7 +108,7 @@ access token from Twitter."
                 (tbnl:set-cookie* cookie)
                 (redis:with-connection ()
                   (redis:with-pipelining
-                    (red:setex (concatenate 'string session-id ":passwd") 86400 (gethash :passwd session))
+                      (red:setex (concatenate 'string session-id ":passwd") 86400 (gethash :passwd session))
                     (red:setex (concatenate 'string session-id ":screen-name") 86400 screen-name)
                     (red:setex (concatenate 'string session-id ":secret") 86400 access-secret)
                     (red:setex (concatenate 'string session-id ":token") 86400 access-token)
@@ -92,21 +120,4 @@ access token from Twitter."
 
                 (setf (tbnl:return-code tbnl:*reply*) 302)
                 (setf (tbnl:header-out "Location" tbnl:*reply*) "/")
-                "You're logged in!")
-
-            ;; If authentication fails, clear the current session
-            (progn
-              (delete-session session-id)
-              (setf (tbnl:return-code tbnl:*reply*) 401)
-              (view/login
-               nil
-               '((:mode . "error")
-                 (:message . "Failed to get an access token. Please try again or open an issue."))))))
-      ;; If authentication fails, clear the current session
-      (progn
-        (delete-session session-id)
-        (setf (tbnl:return-code tbnl:*reply*) 401)
-        (view/login
-         nil
-         '((:mode . "error")
-           (:message . "Failed to get a verifier token. Please try again or open an issue.")))))))
+                "You're logged in!"))))))))
