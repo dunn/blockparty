@@ -21,5 +21,5 @@
   "The login screen."
   (page/full
    "Block Party"
-   "<p><a href='/login' title='Log in please'>Log in now</a></p>"
+   (menu :logged-in nil)
    class flash))

@@ -17,12 +17,16 @@
 
 (in-package #:blockparty)
 
-(defun view/main (screen-name &optional class flash)
-  "The main page (when you're logged in)."
-  (page/full
-   "Block Party"
-   (concatenate 'string
-                (menu :logged-in t)
-                "<h1>Hi @" screen-name "</h1>"
-                (form/filters))
-   class flash))
+(defun menu (&key logged-in)
+  "Return user menu depending on whether the user is LOGGED-IN."
+  (concatenate
+   'string
+   "<ul class='menu'>"
+   (if logged-in
+       (concatenate
+        'string
+        "<li><a href='/settings' title='User preferences'>Settings</a></li>"
+        "<li><a href='/history' title='View and revert block actions'>History</a></li>"
+        "<li><a href='/logout' title='Log out of Block Party'>Logout</a></li>")
+     "<li><a href='/login' title='Log into Block Party'>Login</a></li>")
+   "</ul>"))

@@ -35,11 +35,13 @@
                         :components ((:file "util")
                                      (:file "handlers/callback")
                                      (:file "handlers/login")
+                                     (:file "handlers/logout")
                                      (:file "handlers/root")))
                (:module "views"
                         :components ((:file "login")
                                      (:file "main")
                                      (:file "partials/forms")
+                                     (:file "partials/menu")
                                      (:file "partials/page")))
                (:module "tests"
                         :components ((:file "util-test")))

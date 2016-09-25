@@ -40,9 +40,11 @@
 
   (setq tbnl:*dispatch-table*
         (list
-         (tbnl:create-regex-dispatcher "^/login/?$" 'handle/login)
+         (tbnl:create-regex-dispatcher "^/$" 'handle/root)
          (tbnl:create-regex-dispatcher "^/auth/?$" 'handle/callback)
-         (tbnl:create-regex-dispatcher "^/$" 'handle/root)))
+         (tbnl:create-regex-dispatcher "^/login/?$" 'handle/login)
+         (tbnl:create-regex-dispatcher "^/logout/?$" 'handle/logout)
+         ))
 
   (redis:connect)
   (setf *random-state* (make-random-state t))
