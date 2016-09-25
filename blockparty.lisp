@@ -49,4 +49,4 @@
   (red:set "salt" (ironclad:byte-array-to-hex-string
                    (ironclad:make-random-salt)))
   (tbnl:start blockparty)
-  (loop (sleep 10)))
+  (loop (sleep 60)))
