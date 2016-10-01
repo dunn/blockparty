@@ -70,9 +70,9 @@ bin/blockparty: system-index.txt buildapp
 	         --output bin/blockparty \
 	         --manifest-file system-index.txt
 
-dist-install: quicklisp/dists/distinfo.txt
-
-dist-update: dist-install
+dist-update: quicklisp/dists/distinfo.txt
+dist-install: system-index.txt
+use-dist:
 
 quicklisp/dists/distinfo.txt:
 	${LISP} ${CL_ARGS} ${BATCH} ${EVAL} "(ql:update-dist \"quicklisp\")" ${EVAL} '(quit)'
@@ -93,9 +93,9 @@ server: system-index.txt
 
 # For buildapp
 # see https://github.com/xach/humblecast/blob/master/Makefile
-system-index.txt: quicklisp/setup.lisp
+system-index.txt: quicklisp/setup.lisp use-dist
 	${LISP} ${CL_ARGS} ${BATCH} \
-	     ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
+			 ${EVAL} "(ql-dist:install-dist \"http://beta.quicklisp.org/dist/quicklisp/${DIST}/distinfo.txt\" :prompt nil :replace t)" \
 	     ${LOAD} blockparty.asd \
 	     ${EVAL} '(ql:quickload "blockparty")' \
 	     ${EVAL} '(ql:write-asdf-manifest-file "system-index.txt")' \
