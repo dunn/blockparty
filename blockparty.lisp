@@ -51,4 +51,5 @@
   (red:set "salt" (ironclad:byte-array-to-hex-string
                    (ironclad:make-random-salt)))
   (tbnl:start blockparty)
-  (loop (sleep 60)))
+  (unless (equal (getenv "LISP_ENV") "development")
+    (loop (sleep 60))))
