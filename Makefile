@@ -18,9 +18,8 @@
 .PHONY: buildapp clean dist-update server tests
 
 clean:
-	rm blockparty
+	rm bin/blockparty
 
-# Only SBCL and ABCL are known to work
 LISP ?= sbcl
 
 ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl ccl64 ros))
