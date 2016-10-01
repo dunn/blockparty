@@ -72,6 +72,8 @@ bin/blockparty: system-index.txt buildapp
 
 dist-install: quicklisp/dists/distinfo.txt
 
+dist-update: dist-install
+
 quicklisp/dists/distinfo.txt:
 	${LISP} ${CL_ARGS} ${BATCH} ${EVAL} "(ql:update-dist \"quicklisp\")" ${EVAL} '(quit)'
 
