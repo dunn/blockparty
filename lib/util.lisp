@@ -28,7 +28,7 @@ If the variable is unset return nil."
   #+CMU (cdr (assoc variable ext:*environment-list* :test #'string=))
   #+ECL (si:getenv variable)
   #+LISPWORKS (lispworks:environment-variable variable)
-  #+SBCL (sb-unix::posix-getenv variable)
+  #+SBCL (sb-ext:posix-getenv variable)
   )
 
 (defun get-app-var (variable)
