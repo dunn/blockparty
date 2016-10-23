@@ -17,24 +17,10 @@
 
 (in-package #:blockparty)
 
-;; Some implementation details from
-;; http://cl-cookbook.sourceforge.net/os.html
-(defun getenv (variable)
-  "Get an environment VARIABLE.
-If the variable is unset return nil."
-  #+ABCL (ext:getenv variable)
-  #+Allegro (sys:getenv variable)
-  #+CCL (ccl:getenv variable)
-  #+CMU (cdr (assoc variable ext:*environment-list* :test #'string=))
-  #+ECL (si:getenv variable)
-  #+LISPWORKS (lispworks:environment-variable variable)
-  #+SBCL (sb-ext:posix-getenv variable)
-  )
-
 (defun get-app-var (variable)
   "Return the value of VARIABLE, first checking the environment then
   checking `*oauth-config*'.  Return nil if unset."
-  (or (getenv variable)
+  (or (uiop:getenv variable)
       ;; *oauth-config* is a magic variable set by `main'
       (gethash variable *oauth-config*)))
 

@@ -34,6 +34,7 @@
                #:hunchentoot
                #:ironclad
                #:lisp-unit
+               #:uiop
                #:uuid)
   :serial t
   :components ((:file "package")

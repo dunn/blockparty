@@ -94,8 +94,8 @@ access token from Twitter."
                               :value session-id
                               :max-age 86400
                               :path "/"
-                              :domain (or (getenv "BP_DOMAIN") "localhost")
-                              :secure (equal "production" (getenv "BP_ENV"))
+                              :domain (or (uiop:getenv "BP_DOMAIN") "localhost")
+                              :secure (equal "production" (uiop:getenv "BP_ENV"))
                               :http-only t)))
 
                 ;; (tbnl:acceptor-log-message

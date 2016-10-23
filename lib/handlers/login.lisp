@@ -82,7 +82,7 @@ to authorize the application."
                         ;; Give them a minute to log in to Twitter
                         :max-age 60
                         :path "/"
-                        :secure (equal "production" (getenv "LISP_ENV"))
+                        :secure (equal "production" (uiop:getenv "LISP_ENV"))
                         :http-only t)))
           ;; Hunchentoot has it's own full-fledged session handling
           ;; but I'm not using it since I don't really understand how
