@@ -1,0 +1,27 @@
+name: blockparty
+packages:
+  - name: chirp
+    url: https://github.com/Shinmera/chirp.git
+
+  - name: cl-redis
+    url: https://github.com/vseloved/cl-redis.git
+
+  - name: cl-yaml
+    url: https://github.com/eudoxia0/cl-yaml.git
+
+  - name: hunchentoot
+    url: https://github.com/edicl/hunchentoot.git
+
+  - name: ironclad
+
+  - name: lisp-unit
+    url: https://github.com/OdonataResearchLLC/lisp-unit.git
+
+  - name: uuid
+    url: https://github.com/dardoria/uuid.git
+
+  - name: split-sequence
+    url: https://github.com/sharplispers/split-sequence.git
+
+  # - name: yason
+  #   url: https://github.com/hanshuebner/yason.git

@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [[ ! -f "$(dirname "${BASH_SOURCE[0]}")/../party.pid" ]]; then
+set -e
+
+cd "$(dirname "${BASH_SOURCE[0]}")/../"
+
+if [[ ! -f party.pid ]]; then
   echo "ERROR: blockparty is not running" >&2
   exit 1
 fi
 
-kill -15 "$(cat "$(dirname ${BASH_SOURCE[0]})/../party.pid")"
-rm "$(dirname "${BASH_SOURCE[0]}")/../party.pid"
+kill -15 "$(cat party.pid)"
+rm party.pid

@@ -1,12 +1,22 @@
 #!/bin/bash
 
-if [[ -f "$(dirname "${BASH_SOURCE[0]}")/../party.pid" ]]; then
-  PID=$(cat "$(dirname "${BASH_SOURCE[0]}")/../party.pid")
+set -e
+
+cd "$(dirname "${BASH_SOURCE[0]}")/../"
+
+if [[ -f party.pid ]]; then
+  PID=$(cat party.pid)
   echo "ERROR: blockparty is already running (PID $PID)" >&2
   exit 1
 fi
 
-"$(dirname "${BASH_SOURCE[0]}")/blockparty" &
+sbcl --non-interactive \
+     --no-sysinit \
+     --no-userinit \
+     --load blockparty.asd \
+     --eval '(asdf:load-system :blockparty)' \
+     --eval '(blockparty:main nil)' 2>log/message.log &
+
 PID="$!"
 echo "Running blockparty with PID $PID"
 echo "$PID" > party.pid

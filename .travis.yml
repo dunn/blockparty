@@ -35,7 +35,6 @@ before_install:
   - brew update || brew update
   - brew install openssl libyaml "$LISP"
   - if [[ "$LISP" == "clozure-cl" ]]; then export LISP=ccl64; fi
-  - make bin/blockparty
 
 before_script:
   - mv config/oauth.yml.template config/oauth.yml

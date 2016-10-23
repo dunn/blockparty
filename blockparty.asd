@@ -17,6 +17,13 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with blockparty.  If not, see <http://www.gnu.org/licenses/>.
 
+(require 'asdf)
+
+(asdf:initialize-source-registry
+ `(:source-registry
+   :ignore-inherited-configuration
+   (:tree (:here ".dependencies/packages/"))))
+
 (asdf:defsystem #:blockparty
   :description "Twitter block manager"
   :author "Alex Dunn <dunn.alex@gmail.com>"
@@ -27,7 +34,6 @@
                #:hunchentoot
                #:ironclad
                #:lisp-unit
-               #:postmodern
                #:uuid)
   :serial t
   :components ((:file "package")
