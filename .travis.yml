@@ -5,19 +5,14 @@ node_js:
 
 env:
   global:
-    - PATH="~/.linuxbrew/bin:~/.linuxbrew/sbin:/usr/local/bin:$PATH"
+    - PATH="/usr/local/qi/bin:~/.linuxbrew/bin:~/.linuxbrew/sbin:/usr/local/bin:$PATH"
   matrix:
-    - LISP=clozure-cl
+    - LISP=sbcl
     # TODO: get CMUCL to find OpenSSL
     # - LISP=cmucl
-    - LISP=ecl
-    - LISP=sbcl
-
-matrix:
-  allow_failures:
-    # until their linuxbrew formulae are fixed
-    - env: LISP=ecl
-    - env: LISP=clozure-cl
+    # Commented out until their linuxbrew formulae are fixed
+    # - LISP=ecl
+    # - LISP=clozure-cl
 
 services:
   - redis-server
@@ -35,9 +30,12 @@ before_install:
   - brew update || brew update
   - brew install openssl libyaml "$LISP"
   - if [[ "$LISP" == "clozure-cl" ]]; then export LISP=ccl64; fi
+  - git clone --depth=1 --branch=install-deps https://github.com/dunn/qi.git /usr/local/qi
 
 before_script:
   - mv config/oauth.yml.template config/oauth.yml
+  - qi --install-deps blockparty.asd
+  - cp -r /usr/local/qi/dependencies/* ./.dependencies/packages/
 
 script:
   - make tests
