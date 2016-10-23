@@ -10,12 +10,14 @@ if [[ -f party.pid ]]; then
   exit 1
 fi
 
-sbcl --non-interactive \
-     --no-sysinit \
-     --no-userinit \
-     --load blockparty.asd \
-     --eval '(asdf:load-system :blockparty)' \
-     --eval '(blockparty:main nil)' 2>log/message.log &
+# FIXME: this only works for sbcl
+LISP=${LISP:-sbcl}
+$LISP --non-interactive \
+      --no-sysinit \
+      --no-userinit \
+      --load blockparty.asd \
+      --eval '(asdf:load-system :blockparty)' \
+      --eval '(blockparty:main nil)' 2>log/message.log &
 
 PID="$!"
 echo "Running blockparty with PID $PID"
