@@ -41,9 +41,9 @@ script:
   - make tests
   - if [[ "$TRAVIS_EVENT_TYPE" == "push" ]]; then
       bin/serve;
-      sleep 8;
+      sleep 90;
       curl -IL localhost:3000;
-      cat log/access.log;
+      cat log/message.log;
       npm test;
     fi
 
