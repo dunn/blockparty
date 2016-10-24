@@ -4,5 +4,6 @@
 /bin/blockparty
 /config/*.yml
 /node_modules
+/party.pid
 /sandbox
 log/*
