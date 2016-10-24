@@ -1,0 +1,42 @@
+---
+machine:
+  timezone:
+    America/Los_Angeles
+
+  environment:
+    PATH: "/home/qi/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
+    LISP: sbcl
+
+  services:
+    - redis
+
+dependencies:
+  pre:
+    - sudo mkdir -p /home/linuxbrew
+    - sudo chown "$USER:" /home/linuxbrew
+    - mkdir /home/linuxbrew/.linuxbrew
+    - curl -L https://github.com/Linuxbrew/brew/tarball/master | tar xz -m --strip 1 -C /home/linuxbrew/.linuxbrew
+    - export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+    - brew update || brew update
+    - brew install openssl libyaml "$LISP"
+    - if [[ "$LISP" == "clozure-cl" ]]; then export LISP=ccl64; fi
+    - sudo mkdir -p /home/qi
+    - sudo chown "$USER:" /home/qi
+    - curl -L https://github.com/dunn/qi/tarball/install-deps | tar xz -m --strip 1 -C /home/qi
+
+test:
+  pre:
+    - mv config/oauth.yml.template config/oauth.yml
+    - mkdir ./.dependencies
+    - cp -r /home/qi/dependencies ./.dependencies
+    - mv ./.dependencies/dependencies ./.dependencies/packages
+    - qi --install-deps blockparty.asd
+
+  override:
+    - make tests
+    - if [[ -n "$BP_TEST_PASS" ]]; then
+        bin/serve;
+        sleep 10;
+        curl -IL localhost:3000;
+        npm test;
+      fi
