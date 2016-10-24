@@ -40,3 +40,4 @@ test:
         curl -IL localhost:3000;
         npm test;
       fi
+    - cat log/message.log

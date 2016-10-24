@@ -24,6 +24,7 @@ var hostport = 'http://localhost:3000';
 
 casper.test.begin('Authenticate the app via Twitter', 3, function(test) {
   casper.start(hostport + '/login', function() {
+    this.echo(this.getHTML());
     return this.fill(
       'form[action*="https://api.twitter.com/oauth/authenticate"]',
       // must use single quotes for keys with brackets
