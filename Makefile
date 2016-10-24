@@ -57,7 +57,7 @@ ifeq ($(LISP),ros)
 endif
 
 server:
-	${LISP} ${CL_ARGS} {EVAL} '(blockparty:main nil)'
+	${LISP} ${CL_ARGS} ${EVAL} '(blockparty:main nil)'
 
 tests:
 	${LISP} ${BATCH} ${CL_ARGS} \
