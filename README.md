@@ -4,10 +4,13 @@
 
 ## developing and testing
 
-Dependencies are managed by
-[Quicklisp](https://www.quicklisp.org/beta/).  You can pin it to a
-specific distribution by editing the `use-dist` file then running
-`make dist-install`.
+Dependencies are managed by [Qi](https://github.com/CodyReichert/qi):
+
+```bash
+qi --install-deps blockparty.asd
+# This is a workaround since Qi currently has trouble compiling usocket:
+cp -r path/to/qi/dependencies/* ./.dependencies/packages/
+```
 
 Run `make server` to start the application within the Hunchentoot
 server.
@@ -20,8 +23,8 @@ commands to change the implementation used (defaults to
 
 ## compatibility
 
-- SBCL 1.3.7
-- Clozure CL 1.11 (64-bit; or whatever matches how you built libyaml)
+- SBCL 1.3.x
+- Clozure CL 1.11 (64-bit or whatever matches how you built libyaml)
 
 It almost works in ABCL except for like
 [one thing](https://github.com/edicl/hunchentoot/blob/24f638f8d01fc5f15d1169be1de944392b38d1a2/set-timeouts.lisp#L82).
