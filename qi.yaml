@@ -1,6 +1,8 @@
 name: blockparty
 packages:
-  - name: chirp
+  - name: chirp-core
+    url: https://github.com/Shinmera/chirp.git
+  - name: chirp-drakma
     url: https://github.com/Shinmera/chirp.git
 
   - name: cl-redis
@@ -22,6 +24,3 @@ packages:
 
   - name: split-sequence
     url: https://github.com/sharplispers/split-sequence.git
-
-  # - name: yason
-  #   url: https://github.com/hanshuebner/yason.git
