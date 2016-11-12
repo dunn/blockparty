@@ -19,7 +19,7 @@
 
 LISP ?= sbcl
 
-ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl ccl64 ros))
+ifeq ($(LISP),$(filter $(LISP),abcl sbcl ccl ccl64))
 	LOAD = --load
 	EVAL = --eval
 else
@@ -50,11 +50,6 @@ endif
 CL_ARGS = ${EXTRA_ARGS} \
 					${LOAD} blockparty.asd \
 					${EVAL} '(asdf:load-system :blockparty)'
-
-ifeq ($(LISP),ros)
-	CL_ARGS =
-  # EXTRA_ARGS = --no-rc --no-quicklisp
-endif
 
 server:
 	${LISP} ${CL_ARGS} ${EVAL} '(blockparty:main nil)'
