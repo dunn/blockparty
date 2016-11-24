@@ -22,7 +22,7 @@ dependencies:
     - if [[ "$LISP" == "clozure-cl" ]]; then export LISP=ccl64; fi
     - sudo mkdir -p /home/qi
     - sudo chown "$USER:" /home/qi
-    - curl -L https://github.com/dunn/qi/tarball/install-all | tar xz -m --strip 1 -C /home/qi
+    - curl -L https://github.com/CodyReichert/qi/tarball/master | tar xz -m --strip 1 -C /home/qi
 
 test:
   pre:
