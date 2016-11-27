@@ -8,12 +8,11 @@ Dependencies are managed by [Qi](https://github.com/CodyReichert/qi):
 
 ```bash
 qi --install-deps blockparty.asd
-# This is a workaround since Qi currently has trouble compiling usocket:
-cp -r path/to/qi/dependencies/* ./.dependencies/packages/
 ```
 
-Run `make server` to start the application within the Hunchentoot
-server.
+Then run `make server` to start the application within the Hunchentoot
+server.  Set `LISP_ENV=development` if you want REPL access to the
+running program.
 
 Run `make tests` to run the tests.
 
@@ -22,6 +21,8 @@ commands to change the implementation used (defaults to
 [SBCL](http://www.sbcl.org/)).
 
 ## compatibility
+
+(**NB:** Qi only works with SBCL.)
 
 - SBCL 1.3.x
 - Clozure CL 1.11 (64-bit or whatever matches how you built libyaml)
