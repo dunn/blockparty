@@ -20,15 +20,15 @@
 ;; (defvar request-alist nil)
 ;; (defvar mip nil)
 ;; (handler-case
-;;     (setq request-alist (chirp:oauth/request-token (get-app-var "callback_url")))
+;;     (setq request-alist (chirp:oauth/request-token (oauth-var "callback_url")))
 ;;   (chirp:oauth-request-error (err)
 ;;     (setq mip (chirp:http-body err))))
 
 (defun handle/login ()
   "Get a request token from Twitter, then redirect the user to Twitter
 to authorize the application."
-  (let ((chirp-extra:*oauth-api-key* (get-app-var "client_key"))
-        (chirp-extra:*oauth-api-secret* (get-app-var "client_secret"))
+  (let ((chirp-extra:*oauth-api-key* (oauth-var "client_key"))
+        (chirp-extra:*oauth-api-secret* (oauth-var "client_secret"))
         ;; `request-alist' remains nil unless we successfully get a request
         ;; token, to which it is assigned
         (request-alist)

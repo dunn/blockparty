@@ -17,7 +17,16 @@
 
 (in-package #:blockparty)
 
-(defun get-app-var (variable)
+(defun get-config (name)
+  "Parse the file at config/CONFIG.yml and return it as a hash."
+  ;; yaml:parse returns a hash accessed as
+  ;; (gethash "method" oauth-parameters) => "HMAC-SHA1"
+  ;;
+  ;; http://www.lispworks.com/documentation/HyperSpec/Body/f_mk_pn.htm
+  (yaml:parse (make-pathname :directory '(:relative "config")
+                             :name name :type "yml")))
+
+(defun oauth-var (variable)
   "Return the value of VARIABLE, first checking the environment then
   checking `*oauth-config*'.  Return nil if unset."
   (or (uiop:getenv variable)

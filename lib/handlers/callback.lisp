@@ -20,8 +20,8 @@
 (defun handle/callback ()
   "When arriving from Twitter with a valid oauth_verifier, get an
 access token from Twitter."
-  (let* ((chirp-extra:*oauth-api-key* (get-app-var "client_key"))
-         (chirp-extra:*oauth-api-secret* (get-app-var "client_secret"))
+  (let* ((chirp-extra:*oauth-api-key* (oauth-var "client_key"))
+         (chirp-extra:*oauth-api-secret* (oauth-var "client_secret"))
          ;; `access-alist' remains nil unless we successfully get an access
          ;; token, to which it is assigned
          (access-alist)
