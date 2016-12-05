@@ -31,6 +31,7 @@
 
   ;; Load settings from config/*.yml
   (setq *oauth-config* (get-config "oauth"))
+  (setq *db-config* (get-config "database"))
 
   (setq tbnl:*dispatch-table*
         (list
@@ -39,6 +40,14 @@
          (tbnl:create-regex-dispatcher "^/login/?$" 'handle/login)
          (tbnl:create-regex-dispatcher "^/logout/?$" 'handle/logout)
          ))
+
+  (pomo:clear-connection-pool)
+  (setf pomo:*database*
+        (pomo:connect (gethash "database" *db-config*)
+                      (gethash "user" *db-config*)
+                      (gethash "password" *db-config*)
+                      "localhost"
+                      :pooled-p t))
 
   (redis:connect)
   (setf *random-state* (make-random-state t))

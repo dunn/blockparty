@@ -37,8 +37,7 @@ access token from Twitter."
            nil
            '((:mode . "error")
              (:message . "Failed to get a verifier token. Please try again or open an issue."))))
-      (let* (
-             ;; The cookie corresponding to the Request Token.  When the
+      (let* (;; The cookie corresponding to the Request Token.  When the
              ;; Request Token is authorized, the response from Twitter
              ;; includes the token, so this isn't strictly necessary; but
              ;; pinning it to a cookie makes it a little harder for a

@@ -19,6 +19,8 @@ packages:
   - name: lisp-unit
     url: https://github.com/OdonataResearchLLC/lisp-unit.git
 
+  - name: postmodern
+
   - name: uuid
     url: https://github.com/dardoria/uuid.git
 

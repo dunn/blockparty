@@ -34,22 +34,28 @@
                #:hunchentoot
                #:ironclad
                #:lisp-unit
+               #:postmodern
                #:uiop
                #:uuid)
   :serial t
   :components ((:file "package")
                (:module "lib"
-                        :components ((:file "util")
+                        :components (
+                                     (:file "db")
                                      (:file "handlers/callback")
                                      (:file "handlers/login")
                                      (:file "handlers/logout")
-                                     (:file "handlers/root")))
+                                     (:file "handlers/root")
+                                     (:file "util")
+                                     ))
                (:module "views"
-                        :components ((:file "login")
+                        :components (
+                                     (:file "login")
                                      (:file "main")
                                      (:file "partials/forms")
                                      (:file "partials/menu")
-                                     (:file "partials/page")))
+                                     (:file "partials/page")
+                                     ))
                (:module "tests"
                         :components ((:file "util-test")))
                (:file "blockparty")))
