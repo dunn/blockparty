@@ -38,7 +38,7 @@ to authorize the application."
 
     ;; http://stackoverflow.com/a/13628395
     (handler-case
-        (setq request-alist (chirp:oauth/request-token (get-app-var "callback_url")))
+        (setq request-alist (chirp:oauth/request-token (oauth-var "callback_url")))
       ;; If the request fails, log the error and leave `request-alist'
       ;; unset
       (chirp:oauth-request-error (err)
